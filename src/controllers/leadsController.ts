@@ -21,6 +21,12 @@ export const createLead = async (
       name: name || null,
       email: email || null,
     });
+    console.log('Lead created:', {
+      id: lead.id,
+      name: lead.name,
+      email: lead.email,
+      createdAt: lead.createdAt,
+    });
 
     res.status(201).json({
       success: true,
