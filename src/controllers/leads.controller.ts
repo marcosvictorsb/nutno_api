@@ -141,7 +141,9 @@ export const createLead = async (
       createdAt: lead.createdAt,
     });
 
-    await sendWelcomeEmail(email, lead.name);
+    if (process.env.NODE_ENV === 'production') {
+      await sendWelcomeEmail(email, lead.name);
+    }
 
     res.status(201).json({
       success: true,
