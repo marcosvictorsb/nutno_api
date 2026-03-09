@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createLead } from '../controllers/leadsController';
+import { createLead } from '../controllers/leads.controller';
 import { validateLeadInput } from '../middlewares/validation';
 
 const router = Router();
