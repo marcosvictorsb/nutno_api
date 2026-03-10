@@ -2,13 +2,14 @@ import { Response } from 'express';
 import { CustomRequest } from '../../../middlewares/validation';
 import Lead from '../models/Lead';
 import { Op } from 'sequelize';
+import logger from '../../../config/logger';
 
 export const getLeads = async (
-  request: CustomRequest,
+  _request: CustomRequest,
   response: Response
 ): Promise<void> => {
   try {
-    console.log(request.body);
+    logger.info('Iniciando a busca pelos leads');
 
     const leads = await Lead.findAll({
       attributes: ['id', 'name', 'email', 'createdAt'],
@@ -30,6 +31,8 @@ export const getLeads = async (
       }))
       .filter((lead) => lead.email !== 'marcosvictorsb@gmail.com');
 
+    logger.info('Filtrando os leads com o email: marcosvictorsb@gmail.com');
+
     const unique = result.reduce(
       (acc: typeof result, item) => {
         if (!acc.some((t) => t.email === item.email)) {
@@ -40,12 +43,14 @@ export const getLeads = async (
       [] as typeof result
     );
 
+    logger.info('Removido os leads com email duplicado');
+
     response.status(200).json({
       success: true,
       data: unique,
     });
-  } catch (error) {
-    console.error('Error fetching leads:', error);
+  } catch (error: any) {
+    logger.error('Error fetching leads:', error);
     response.status(500).json({
       success: false,
       error: 'Failed to fetch leads',
