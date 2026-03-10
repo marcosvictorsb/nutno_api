@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import Lead from '../models/Lead';
-import { CustomRequest } from '../middlewares/validation';
+import { CustomRequest } from '../../../middlewares/validation';
 
 export const countLeads = async (
   _req: CustomRequest,

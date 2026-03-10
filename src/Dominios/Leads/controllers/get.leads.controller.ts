@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { CustomRequest } from '../middlewares/validation';
+import { CustomRequest } from '../../../middlewares/validation';
 import Lead from '../models/Lead';
 import { Op } from 'sequelize';
 

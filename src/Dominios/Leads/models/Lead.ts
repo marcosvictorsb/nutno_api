@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database';
+import sequelize from '../../../infra/database/model/sequelize.config';
 
 class Lead extends Model {
   public id!: number;

@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import Lead from '../models/Lead';
-import { CustomRequest } from '../middlewares/validation';
+import { CustomRequest } from '../../../middlewares/validation';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);
