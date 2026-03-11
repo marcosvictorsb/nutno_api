@@ -24,11 +24,11 @@ export const fazerLogin = async (
   try {
     const { email, senha } = req.body;
 
-    logger.info({ email }, 'Tentativa de login');
+    logger.info('Tentativa de login', { email });
 
     // Validar campos obrigatórios
     if (!email || !senha) {
-      logger.warn({ email }, 'Email ou senha não fornecidos');
+      logger.warn('Email ou senha não fornecidos', { email });
       return res.status(400).json({
         success: false,
         message: 'Email e senha são obrigatórios',
@@ -39,7 +39,7 @@ export const fazerLogin = async (
     const nutricionista = await Nutricionista.findOne({ where: { email } });
 
     if (!nutricionista) {
-      logger.warn({ email }, 'Nutricionista não encontrado');
+      logger.warn('Nutricionista não encontrado', { email });
       return res.status(401).json({
         success: false,
         message: 'Email ou senha inválidos',
@@ -50,7 +50,7 @@ export const fazerLogin = async (
     const senhaValida = await comparePassword(senha, nutricionista.senha);
 
     if (!senhaValida) {
-      logger.warn({ email }, 'Senha incorreta');
+      logger.warn('Senha incorreta', { email });
       return res.status(401).json({
         success: false,
         message: 'Email ou senha inválidos',
@@ -64,7 +64,7 @@ export const fazerLogin = async (
       nome: nutricionista.nome,
     });
 
-    logger.info({ email }, 'Login realizado com sucesso');
+    logger.info('Login realizado com sucesso', { email });
 
     return res.status(200).json({
       success: true,
@@ -77,7 +77,7 @@ export const fazerLogin = async (
       },
     });
   } catch (error: Error | any) {
-    logger.error({ error }, 'Erro ao fazer login');
+    logger.error('Erro ao fazer login', { error });
     return res.status(500).json({
       success: false,
       message: 'Erro ao fazer login',

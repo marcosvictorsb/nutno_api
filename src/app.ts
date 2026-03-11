@@ -5,6 +5,7 @@ import { requestIdMiddleware } from './middlewares/requestId';
 import leadRoutes from './Dominios/Leads/routes/lead.routes';
 // import nutricionistaRouta from './Dominios/Nutricionista/routes/v1/routes';
 import autentificacaoRoutes from './Dominios/Autentificação/routes/autentificacao.routes';
+import pacienteRoutes from './Dominios/Pacientes/routes/paciente.routes';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use('/', leadRoutes);
 // app.use('/login', nutricionistaRouta);
 
 app.use('/auth', autentificacaoRoutes);
+app.use('/', pacienteRoutes);
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);

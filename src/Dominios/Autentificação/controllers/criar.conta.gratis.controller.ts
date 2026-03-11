@@ -8,10 +8,10 @@ import { hashPassword } from '../../../utils/password';
 export const criarContaGratis = async (req: Request, res: Response) => {
   try {
     const { email, senha, nome } = req.body;
-    logger.info({ email }, 'Criando conta grátis');
+    logger.info('Criando conta grátis', { email });
 
     if (!email || !senha || !nome) {
-      logger.warn({ email }, 'Dados incompletos para criação de conta');
+      logger.warn('Dados incompletos para criação de conta', { email });
       return res.status(400).json({
         success: false,
         message: 'Email, senha e nome são obrigatórios',
@@ -21,7 +21,7 @@ export const criarContaGratis = async (req: Request, res: Response) => {
     const nutricionista = await Nutricionista.findOne({ where: { email } });
 
     if (nutricionista) {
-      logger.warn({ email }, 'Email já em uso');
+      logger.warn('Email já em uso', { email });
       return res.status(400).json({
         success: false,
         message: 'Email já está em uso',
@@ -36,17 +36,17 @@ export const criarContaGratis = async (req: Request, res: Response) => {
       senha: senhaHash,
       nome,
     });
-    logger.info(
-      { email, id: nutricionistaCriado.id },
-      'Nutricionista criado com sucesso'
-    );
+    logger.info('Nutricionista criado com sucesso', {
+      email,
+      id: nutricionistaCriado.id,
+    });
 
     // Buscar plano gratuito
-    logger.info({ email }, 'Buscando plano gratuito');
+    logger.info('Buscando plano gratuito', { email });
     const planoGratuito = await Plano.findOne({ where: { gratuito: true } });
 
     if (!planoGratuito) {
-      logger.error({ email }, 'Plano gratuito não encontrado');
+      logger.error('Plano gratuito não encontrado', { email });
       return res.status(500).json({
         success: false,
         message: 'Erro ao configurar inscrição. Plano gratuito não encontrado',
@@ -58,14 +58,11 @@ export const criarContaGratis = async (req: Request, res: Response) => {
     dataVencimento.setDate(dataVencimento.getDate() + 30);
 
     // Criar inscrição
-    logger.info(
-      {
-        email,
-        id_nutricionista: nutricionistaCriado.id,
-        id_plano: planoGratuito.id,
-      },
-      'Criando inscrição do nutricionista'
-    );
+    logger.info('Criando inscrição do nutricionista', {
+      email,
+      id_nutricionista: nutricionistaCriado.id,
+      id_plano: planoGratuito.id,
+    });
     await Inscricao.create({
       id_nutricionista: nutricionistaCriado.id,
       id_plano: planoGratuito.id,
@@ -74,7 +71,7 @@ export const criarContaGratis = async (req: Request, res: Response) => {
       ativo: true,
     });
 
-    logger.info({ email }, 'Inscrição criada com sucesso');
+    logger.info('Inscrição criada com sucesso', { email });
 
     return res.status(201).json({
       success: true,
@@ -86,7 +83,7 @@ export const criarContaGratis = async (req: Request, res: Response) => {
       },
     });
   } catch (error: Error | any) {
-    logger.error({ error }, 'Erro ao criar conta grátis');
+    logger.error('Erro ao criar conta grátis', { error });
     return res.status(500).json({
       success: false,
       message: 'Falha ao criar conta grátis',
