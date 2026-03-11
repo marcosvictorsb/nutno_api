@@ -16,11 +16,11 @@ export const recuperarSenha = async (
   try {
     const { email } = req.body;
 
-    logger.info({ email }, 'Tentativa de recuperação de senha');
+    logger.info('Tentativa de recuperação de senha', { email });
 
     // Validar email
     if (!email) {
-      logger.warn('Email não fornecido');
+      logger.warn('Email não fornecido', { email });
       return res.status(400).json({
         success: false,
         message: 'Email é obrigatório',
@@ -32,7 +32,7 @@ export const recuperarSenha = async (
 
     if (!nutricionista) {
       // Não informar se o email existe ou não (segurança)
-      logger.warn({ email }, 'Email não encontrado');
+      logger.warn('Email não encontrado', { email });
       return res.status(200).json({
         success: true,
         message:
@@ -71,15 +71,14 @@ export const recuperarSenha = async (
         );
       }
 
-      logger.info(
-        { email },
-        'Email de recuperação de senha enviado com sucesso'
-      );
+      logger.info('Email de recuperação de senha enviado com sucesso', {
+        email,
+      });
     } catch (emailError) {
-      logger.error(
-        { email, error: emailError },
-        'Erro ao enviar email de recuperação'
-      );
+      logger.error('Erro ao enviar email de recuperação', {
+        email,
+        error: emailError,
+      });
 
       await nutricionista.update({
         reset_password_token: null,
@@ -93,7 +92,7 @@ export const recuperarSenha = async (
         'Se o email existe em nossa base, você receberá um link para recuperar a senha',
     });
   } catch (error: Error | any) {
-    logger.error({ error }, 'Erro ao recuperar senha');
+    logger.error('Erro ao recuperar senha', { error });
     return res.status(500).json({
       success: false,
       message: 'Erro ao processar recuperação de senha',
