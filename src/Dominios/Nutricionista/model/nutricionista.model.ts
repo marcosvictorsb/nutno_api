@@ -9,6 +9,8 @@ class Nutricionista extends Model {
   public created_at!: Date;
   public updated_at!: Date;
   public deleted_at!: Date;
+  public reset_password_token?: string;
+  public reset_password_expires?: Date;
 }
 
 Nutricionista.init(
@@ -39,6 +41,14 @@ Nutricionista.init(
       defaultValue: DataTypes.NOW,
     },
     deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    reset_password_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    reset_password_expires: {
       type: DataTypes.DATE,
       allowNull: true,
     },
