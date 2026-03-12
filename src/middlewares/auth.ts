@@ -51,7 +51,7 @@ export function authMiddleware(
       });
     }
   } catch (error) {
-    logger.error({ error }, 'Erro na autenticação');
+    logger.error('Erro na autenticação', { error });
     res.status(500).json({
       success: false,
       message: 'Erro na autenticação',

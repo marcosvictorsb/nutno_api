@@ -66,7 +66,7 @@ export async function sendEmail(
     console.log(`Email sent to ${_to}:`, result);
     return result;
   } catch (error) {
-    logger.error({ error }, 'Erro ao enviar email');
+    logger.error('Erro ao enviar email', { error });
     throw new Error('Falha ao enviar email');
   }
 }
