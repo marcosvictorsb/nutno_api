@@ -60,6 +60,11 @@ export const listarPacientes = async (
       order: [['criado_em', 'DESC']],
     });
 
+    logger.info('Pacientes listados com sucesso', {
+      id_nutricionista,
+      total: pacientes.length,
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Pacientes listados com sucesso',

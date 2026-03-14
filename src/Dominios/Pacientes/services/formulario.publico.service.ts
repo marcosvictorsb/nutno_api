@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 import logger from '../../../config/logger';
 
 interface EnviarFormularioEmailParams {
@@ -6,6 +8,26 @@ interface EnviarFormularioEmailParams {
   nomePaciente: string;
   nomeNutricionista: string;
   linkFormulario: string;
+}
+
+function renderizarTemplate(
+  templatePath: string,
+  dados: Record<string, string>
+): string {
+  try {
+    let html = readFileSync(templatePath, 'utf-8');
+
+    // Substituir variáveis no template
+    Object.entries(dados).forEach(([chave, valor]) => {
+      const placeholder = `{{${chave}}}`;
+      html = html.replace(new RegExp(placeholder, 'g'), valor);
+    });
+
+    return html;
+  } catch (error) {
+    logger.error('Erro ao ler template de email', { error, templatePath });
+    throw new Error('Erro ao renderizar template de email');
+  }
 }
 
 export async function enviarFormularioPorEmail({
@@ -22,18 +44,18 @@ export async function enviarFormularioPorEmail({
 
   const resend = new Resend(apiKey);
 
-  const html = `
-    <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.5; color: #1f2937;">
-        <h2>Ola, ${nomePaciente}!</h2>
-        <p>${nomeNutricionista} enviou seu formulario inicial.</p>
-        <p>Para preencher, clique no link abaixo:</p>
-        <p><a href="${linkFormulario}" target="_blank">Preencher formulario</a></p>
-        <p>Se o botao nao abrir, copie e cole este link no navegador:</p>
-        <p>${linkFormulario}</p>
-      </body>
-    </html>
-  `;
+  // Caminho do template
+  const templatePath = resolve(
+    __dirname,
+    '../../../templates/emails/formulario-anamnese.html'
+  );
+
+  // Renderizar template com as variáveis
+  const html = renderizarTemplate(templatePath, {
+    nomePaciente,
+    nomeNutricionista,
+    linkFormulario,
+  });
 
   logger.info('Enviando formulario por email', { email });
 

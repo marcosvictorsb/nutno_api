@@ -8,7 +8,6 @@ import {
   enviarFormularioPorEmail,
   gerarLinkWhatsApp,
 } from '../services/formulario.publico.service';
-import { log } from 'node:console';
 
 interface EnviarFormularioBody {
   canal: 'email' | 'whatsapp';
@@ -90,71 +89,31 @@ export const enviarFormularioPaciente = async (
       });
     }
 
-    const baseFormulario =
-      process.env.FORMULARIO_BASE_URL || 'https://nutno.com.br/formulario';
+    const baseFormulario = `${process.env.APP_URL}/formulario`;
     const link_formulario = `${baseFormulario}/${paciente.token_formulario}`;
 
-    if (canal === 'email') {
-      if (!paciente.email) {
-        logger.warn(
-          'Paciente nao possui email cadastrado para enviar formulario',
-          {
-            id_nutricionista,
-            id_paciente,
-          }
-        );
-        return res.status(400).json({
-          success: false,
-          message: 'Paciente nao possui email cadastrado',
-        });
-      }
-
-      await enviarFormularioPorEmail({
-        email: paciente.email,
-        nomePaciente: paciente.nome,
-        nomeNutricionista: req.user?.nome || 'Nutricionista',
-        linkFormulario: link_formulario,
-      });
-
-      logger.info('Formulario enviado para paciente', {
-        id_nutricionista,
-        id_paciente,
-        canal,
-      });
-
-      return res.status(200).json({
-        success: true,
-        message: 'Formulario enviado por email com sucesso',
-        data: {
-          canal,
-          link_formulario,
-        },
-      });
-    }
-
-    if (!paciente.whatsapp) {
-      logger.info(
-        'Paciente nao possui whatsapp cadastrado para enviar formulario',
+    if (!paciente.email) {
+      logger.warn(
+        'Paciente nao possui email cadastrado para enviar formulario',
         {
           id_nutricionista,
           id_paciente,
         }
       );
-
       return res.status(400).json({
         success: false,
-        message: 'Paciente nao possui whatsapp cadastrado',
+        message: 'Paciente nao possui email cadastrado',
       });
     }
 
-    const mensagem = criarMensagemWhatsApp(
-      paciente.nome,
-      req.user?.nome || 'Nutricionista',
-      link_formulario
-    );
-    const link_whatsapp = gerarLinkWhatsApp(paciente.whatsapp, mensagem);
+    await enviarFormularioPorEmail({
+      email: paciente.email,
+      nomePaciente: paciente.nome,
+      nomeNutricionista: req.user?.nome || 'Nutricionista',
+      linkFormulario: link_formulario,
+    });
 
-    logger.info('Link de whatsapp gerado para envio de formulario', {
+    logger.info('Formulario enviado para paciente', {
       id_nutricionista,
       id_paciente,
       canal,
@@ -162,13 +121,50 @@ export const enviarFormularioPaciente = async (
 
     return res.status(200).json({
       success: true,
-      message: 'Link de whatsapp gerado com sucesso',
+      message: 'Formulario enviado por email com sucesso',
       data: {
         canal,
         link_formulario,
-        link_whatsapp,
       },
     });
+
+    // if (!paciente.whatsapp) {
+    //   logger.info(
+    //     'Paciente nao possui whatsapp cadastrado para enviar formulario',
+    //     {
+    //       id_nutricionista,
+    //       id_paciente,
+    //     }
+    //   );
+
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Paciente nao possui whatsapp cadastrado',
+    //   });
+    // }
+
+    // const mensagem = criarMensagemWhatsApp(
+    //   paciente.nome,
+    //   req.user?.nome || 'Nutricionista',
+    //   link_formulario
+    // );
+    // const link_whatsapp = gerarLinkWhatsApp(paciente.whatsapp, mensagem);
+
+    // logger.info('Link de whatsapp gerado para envio de formulario', {
+    //   id_nutricionista,
+    //   id_paciente,
+    //   canal,
+    // });
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: 'Link de whatsapp gerado com sucesso',
+    //   data: {
+    //     canal,
+    //     link_formulario,
+    //     link_whatsapp,
+    //   },
+    // });
   } catch (error: Error | any) {
     logger.error('Erro ao enviar formulario para paciente', { error });
     return res.status(500).json({
