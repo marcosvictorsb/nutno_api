@@ -8,6 +8,7 @@ import autentificacaoRoutes from './Dominios/Autentificação/routes/autentifica
 import pacienteRoutes from './Dominios/Pacientes/routes/paciente.routes';
 import formularioPublicoRoutes from './Dominios/Anamnese/routes/formulario.publico.routes';
 import anamneseRoutes from './Dominios/Anamnese/routes/anamnese.routes';
+import medidasRoutes from './Dominios/Medidas/routes/medidas.routes';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/', formularioPublicoRoutes);
 app.use('/auth', autentificacaoRoutes);
 app.use('/', pacienteRoutes);
 app.use('/', anamneseRoutes);
+app.use('/', medidasRoutes);
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
