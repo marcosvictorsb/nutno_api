@@ -85,7 +85,7 @@ async function deduplicarAlimentos() {
 
     for (let i = 0; i < alimentosTaco.length; i++) {
       const alimentoTaco = alimentosTaco[i];
-      let melhorMatch: { alimentoId: number; similaridade: number } | null =
+      let melhorMatch: { id_alimento: number; similaridade: number } | null =
         null;
 
       // Comparar com cada alimento TBCA
@@ -99,7 +99,7 @@ async function deduplicarAlimentos() {
         if (similaridade > LIMITE_SIMILARIDADE) {
           if (!melhorMatch || similaridade > melhorMatch.similaridade) {
             melhorMatch = {
-              alimentoId: alimentoTbca.id,
+              id_alimento: alimentoTbca.id,
               similaridade,
             };
           }
@@ -110,14 +110,14 @@ async function deduplicarAlimentos() {
       if (melhorMatch) {
         // Buscar os dados completos para exibição
         const alimentoTbcaDuplicado = alimentosTbca.find(
-          (a) => a.id === melhorMatch!.alimentoId
+          (a) => a.id === melhorMatch!.id_alimento
         );
 
         if (alimentoTbcaDuplicado) {
           // Desativar o alimento TBCA
           await Alimento.update(
             { ativo: false },
-            { where: { id: melhorMatch.alimentoId } }
+            { where: { id: melhorMatch.id_alimento } }
           );
 
           duplicatasEncontradas++;

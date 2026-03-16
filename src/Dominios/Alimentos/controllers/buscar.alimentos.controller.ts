@@ -11,14 +11,14 @@ export const buscarAlimentos = async (
   res: Response<ApiResponse<any>>
 ) => {
   try {
-    const nutricionistaId = req.user?.id;
+    const id_nutricionista = req.user?.id;
 
     logger.info('Requisição para buscar alimentos recebida', {
-      nutricionistaId,
+      id_nutricionista,
       query: req.query,
     });
 
-    if (!nutricionistaId) {
+    if (!id_nutricionista) {
       logger.warn('Usuario nao autenticado tentou buscar alimentos');
       return res.status(401).json({
         success: false,
@@ -52,7 +52,7 @@ export const buscarAlimentos = async (
       ativo: true,
       [Op.or]: [
         { id_nutricionista: null }, // Alimentos TACO/TBCA
-        { id_nutricionista: nutricionistaId }, // Alimentos personalizados do nutricionista
+        { id_nutricionista: id_nutricionista }, // Alimentos personalizados do nutricionista
       ],
     };
 
@@ -87,7 +87,7 @@ export const buscarAlimentos = async (
           `,
           {
             replacements: [
-              nutricionistaId,
+              id_nutricionista,
               ...(grupo ? [grupo] : []),
               ...(fonte ? [fonte] : []),
               busca,
@@ -115,7 +115,7 @@ export const buscarAlimentos = async (
             `,
             {
               replacements: [
-                nutricionistaId,
+                id_nutricionista,
                 ...(grupo ? [grupo] : []),
                 ...(fonte ? [fonte] : []),
                 `%${busca}%`,

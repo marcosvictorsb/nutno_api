@@ -9,16 +9,16 @@ export const atualizarAlimento = async (
   res: Response<ApiResponse<Alimento>>
 ) => {
   try {
-    const nutricionistaId = req.user?.id;
-    const alimentoId = parseInt(String(req.params.id), 10);
+    const id_nutricionista = req.user?.id;
+    const id_alimento = parseInt(String(req.params.id), 10);
 
     logger.info('Requisição para atualizar alimento recebida', {
-      nutricionistaId,
-      alimentoId,
+      id_nutricionista,
+      id_alimento,
       body: req.body,
     });
 
-    if (!nutricionistaId) {
+    if (!id_nutricionista) {
       logger.warn('Usuario nao autenticado tentou atualizar alimento');
       return res.status(401).json({
         success: false,
@@ -27,10 +27,10 @@ export const atualizarAlimento = async (
     }
 
     // Buscar alimento
-    const alimento = await Alimento.findByPk(alimentoId);
+    const alimento = await Alimento.findByPk(id_alimento);
 
     if (!alimento) {
-      logger.warn('Alimento nao encontrado', { alimentoId });
+      logger.warn('Alimento nao encontrado', { id_alimento });
       return res.status(404).json({
         success: false,
         message: 'Alimento nao encontrado',
@@ -40,9 +40,9 @@ export const atualizarAlimento = async (
     // Validar se é personalizado
     if (alimento.fonte !== 'personalizado') {
       logger.warn('Tentativa de editar alimento nao personalizado', {
-        alimentoId,
+        id_alimento,
         fonte: alimento.fonte,
-        nutricionistaId,
+        id_nutricionista,
       });
       return res.status(403).json({
         success: false,
@@ -52,11 +52,11 @@ export const atualizarAlimento = async (
     }
 
     // Validar se pertence ao nutricionista logado
-    if (alimento.id_nutricionista !== nutricionistaId) {
+    if (alimento.id_nutricionista !== id_nutricionista) {
       logger.warn('Usuario tentou editar alimento de outro nutricionista', {
-        alimentoId,
+        id_alimento,
         proprietarioId: alimento.id_nutricionista,
-        usuarioId: nutricionistaId,
+        usuarioId: id_nutricionista,
       });
       return res.status(403).json({
         success: false,
@@ -184,7 +184,7 @@ export const atualizarAlimento = async (
 
     // Se nenhum campo foi informado para atualizar
     if (Object.keys(atualizacoes).length === 0) {
-      logger.warn('Nenhum campo para atualizar', { alimentoId });
+      logger.warn('Nenhum campo para atualizar', { id_alimento });
       return res.status(400).json({
         success: false,
         message: 'Nenhum campo para atualizar foi informado',
@@ -195,8 +195,8 @@ export const atualizarAlimento = async (
     await alimento.update(atualizacoes);
 
     logger.info('Alimento atualizado com sucesso', {
-      alimentoId,
-      nutricionistaId,
+      id_alimento,
+      id_nutricionista,
       camposAtualizados: Object.keys(atualizacoes),
     });
 

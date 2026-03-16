@@ -48,14 +48,14 @@ export const criarAlimento = async (
   res: Response<ApiResponse<Alimento>>
 ) => {
   try {
-    const nutricionistaId = req.user?.id;
+    const id_nutricionista = req.user?.id;
 
     logger.info('Requisição para criar alimento recebida', {
-      nutricionistaId,
+      id_nutricionista,
       body: req.body,
     });
 
-    if (!nutricionistaId) {
+    if (!id_nutricionista) {
       logger.warn('Usuario nao autenticado tentou criar alimento');
       return res.status(401).json({
         success: false,
@@ -155,14 +155,14 @@ export const criarAlimento = async (
     const alimentoJaExiste = await Alimento.findOne({
       where: {
         nome: nome.trim(),
-        id_nutricionista: nutricionistaId,
+        id_nutricionista: id_nutricionista,
         fonte: 'personalizado',
       },
     });
 
     if (alimentoJaExiste) {
       logger.warn('Alimento com este nome ja existe para este nutricionista', {
-        nutricionistaId,
+        id_nutricionista,
         nome: nome.trim(),
       });
       return res.status(409).json({
@@ -173,7 +173,7 @@ export const criarAlimento = async (
 
     // Criar alimento
     const novoAlimento = await Alimento.create({
-      id_nutricionista: nutricionistaId,
+      id_nutricionista: id_nutricionista,
       nome: nome.trim(),
       grupo: grupo.trim(),
       fonte: 'personalizado',
@@ -215,8 +215,8 @@ export const criarAlimento = async (
     });
 
     logger.info('Alimento criado com sucesso', {
-      alimentoId: novoAlimento.id,
-      nutricionistaId,
+      id_alimento: novoAlimento.id,
+      id_nutricionista,
     });
 
     return res.status(201).json({

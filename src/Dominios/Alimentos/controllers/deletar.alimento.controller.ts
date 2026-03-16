@@ -9,15 +9,15 @@ export const deletarAlimento = async (
   res: Response<ApiResponse<null>>
 ) => {
   try {
-    const nutricionistaId = req.user?.id;
-    const alimentoId = parseInt(String(req.params.id), 10);
+    const id_nutricionista = req.user?.id;
+    const id_alimento = parseInt(String(req.params.id), 10);
 
     logger.info('Requisição para deletar alimento recebida', {
-      nutricionistaId,
-      alimentoId,
+      id_nutricionista,
+      id_alimento,
     });
 
-    if (!nutricionistaId) {
+    if (!id_nutricionista) {
       logger.warn('Usuario nao autenticado tentou deletar alimento');
       return res.status(401).json({
         success: false,
@@ -25,11 +25,11 @@ export const deletarAlimento = async (
       });
     }
 
-    logger.info('Buscando alimento para deletar', { alimentoId });
-    const alimento = await Alimento.findByPk(alimentoId);
+    logger.info('Buscando alimento para deletar', { id_alimento });
+    const alimento = await Alimento.findByPk(id_alimento);
 
     if (!alimento) {
-      logger.warn('Alimento nao encontrado', { alimentoId });
+      logger.warn('Alimento nao encontrado', { id_alimento });
       return res.status(404).json({
         success: false,
         message: 'Alimento nao encontrado',
@@ -43,9 +43,9 @@ export const deletarAlimento = async (
 
     if (alimento.fonte !== 'personalizado') {
       logger.warn('Tentativa de deletar alimento nao personalizado', {
-        alimentoId,
+        id_alimento,
         fonte: alimento.fonte,
-        nutricionistaId,
+        id_nutricionista,
       });
       return res.status(403).json({
         success: false,
@@ -54,16 +54,16 @@ export const deletarAlimento = async (
     }
 
     logger.info('Validando se o alimento pertence ao nutricionista', {
-      alimentoId,
+      id_alimento,
       proprietarioId: alimento.id_nutricionista,
-      usuarioId: nutricionistaId,
+      usuarioId: id_nutricionista,
     });
 
-    if (alimento.id_nutricionista !== nutricionistaId) {
+    if (alimento.id_nutricionista !== id_nutricionista) {
       logger.warn('Usuario tentou deletar alimento de outro nutricionista', {
-        alimentoId,
+        id_alimento,
         proprietarioId: alimento.id_nutricionista,
-        usuarioId: nutricionistaId,
+        usuarioId: id_nutricionista,
       });
       return res.status(403).json({
         success: false,
@@ -75,7 +75,7 @@ export const deletarAlimento = async (
     // Verificar se o alimento está sendo usado em algum ItemRefeicao ativo
     // const itemRefeicaoEmUso = await ItemRefeicao.findOne({
     //   where: {
-    //     alimento_id: alimentoId,
+    //     alimento_id: id_alimento,
     //   },
     //   include: [
     //     {
@@ -92,8 +92,8 @@ export const deletarAlimento = async (
     //
     // if (itemRefeicaoEmUso) {
     //   logger.warn('Tentativa de deletar alimento em uso', {
-    //     alimentoId,
-    //     nutricionistaId,
+    //     id_alimento,
+    //     id_nutricionista,
     //   });
     //   return res.status(409).json({
     //     success: false,
@@ -105,8 +105,8 @@ export const deletarAlimento = async (
     await alimento.destroy();
 
     logger.info('Alimento deletado com sucesso', {
-      alimentoId,
-      nutricionistaId,
+      id_alimento,
+      id_nutricionista,
     });
 
     return res.status(204).send();
