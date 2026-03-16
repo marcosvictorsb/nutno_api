@@ -15,7 +15,11 @@
     "migrate:undo": "sequelize-cli db:migrate:undo",
     "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
     "seed": "sequelize-cli db:seed:all",
-    "seed:undo": "sequelize-cli db:seed:undo:all"
+    "seed:undo": "sequelize-cli db:seed:undo:all",
+    "seed:taco": "ts-node scripts/seed-taco.ts",
+    "seed:tbca": "ts-node scripts/seed-tbca.ts",
+    "seed:dedup": "ts-node scripts/deduplicar-alimentos.ts",
+    "seed:alimentos": "npm run seed:taco && npm run seed:tbca && npm run seed:dedup"
   },
   "repository": {
     "type": "git",
