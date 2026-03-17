@@ -71,7 +71,14 @@ export const buscarAlimentos = async (
 
     if (busca) {
       try {
-        // Tentar busca FULLTEXT
+        // Buscar com LIKE (começa com)
+        logger.info('Realizando busca por alimentos', {
+          id_nutricionista,
+          busca,
+          grupo,
+          fonte,
+        });
+
         alimentosBuscados = await sequelize.query(
           `
           SELECT * FROM alimentos
@@ -79,7 +86,7 @@ export const buscarAlimentos = async (
             AND (id_nutricionista IS NULL OR id_nutricionista = ?)
             ${grupo ? 'AND grupo = ?' : ''}
             ${fonte ? 'AND fonte = ?' : ''}
-            AND MATCH(nome) AGAINST(? IN BOOLEAN MODE)
+            AND nome LIKE ?
           ORDER BY 
             CASE WHEN fonte IN ('taco', 'tbca') THEN 0 ELSE 1 END,
             nome ASC
@@ -90,7 +97,7 @@ export const buscarAlimentos = async (
               id_nutricionista,
               ...(grupo ? [grupo] : []),
               ...(fonte ? [fonte] : []),
-              busca,
+              `${busca}%`,
               limite,
               offset,
             ],
@@ -98,41 +105,20 @@ export const buscarAlimentos = async (
           }
         );
 
-        // Se FULLTEXT não retornar resultados, tentar LIKE
-        if (alimentosBuscados.length === 0) {
-          alimentosBuscados = await sequelize.query(
-            `
-            SELECT * FROM alimentos
-            WHERE ativo = TRUE
-              AND (id_nutricionista IS NULL OR id_nutricionista = ?)
-              ${grupo ? 'AND grupo = ?' : ''}
-              ${fonte ? 'AND fonte = ?' : ''}
-              AND nome LIKE ?
-            ORDER BY 
-              CASE WHEN fonte IN ('taco', 'tbca') THEN 0 ELSE 1 END,
-              nome ASC
-            LIMIT ? OFFSET ?
-            `,
-            {
-              replacements: [
-                id_nutricionista,
-                ...(grupo ? [grupo] : []),
-                ...(fonte ? [fonte] : []),
-                `%${busca}%`,
-                limite,
-                offset,
-              ],
-              type: QueryTypes.SELECT,
-            }
-          );
-        }
+        logger.info('Busca retornou resultados', {
+          id_nutricionista,
+          busca,
+          grupo,
+          fonte,
+          resultados: alimentosBuscados.length,
+        });
       } catch (error) {
-        logger.warn('Erro ao fazer busca FULLTEXT, usando LIKE', { error });
-        // Fallback para LIKE
+        logger.warn('Erro ao fazer busca, usando ORM', { error });
+        // Fallback para ORM
         alimentosBuscados = await Alimento.findAll({
           where: {
             ...where,
-            nome: { [Op.like]: `%${busca}%` },
+            nome: { [Op.like]: `${busca}%` },
           },
           order: [
             [
@@ -168,7 +154,7 @@ export const buscarAlimentos = async (
     const total = await Alimento.count({
       where: {
         ...where,
-        ...(busca && { nome: { [Op.like]: `%${busca}%` } }),
+        ...(busca && { nome: { [Op.like]: `${busca}%` } }),
       },
     });
 
