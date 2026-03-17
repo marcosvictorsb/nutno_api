@@ -1,5 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
+import type PlanoAlimentar from './PlanoAlimentar';
+import type ItemRefeicao from './ItemRefeicao';
 
 type NomeRefeicao =
   | 'Café da manhã'
@@ -12,7 +14,7 @@ type NomeRefeicao =
 
 class Refeicao extends Model {
   public id!: number;
-  public id_plano_alimentar!: number;
+  public plano_alimentar_id!: number;
   public nome!: NomeRefeicao;
   public horario_sugerido?: string;
   public ordem!: number;
@@ -20,6 +22,10 @@ class Refeicao extends Model {
   public criado_em!: Date;
   public atualizado_em!: Date;
   public deletado_em?: Date;
+
+  // Associações
+  public plano_alimentar?: PlanoAlimentar;
+  public itens?: ItemRefeicao[];
 }
 
 Refeicao.init(
@@ -29,7 +35,7 @@ Refeicao.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    id_plano_alimentar: {
+    plano_alimentar_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {

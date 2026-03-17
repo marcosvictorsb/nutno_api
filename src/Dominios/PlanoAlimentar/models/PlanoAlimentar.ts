@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
+import type Refeicao from './Refeicao';
 
 type StatusPlano = 'rascunho' | 'ativo' | 'arquivado';
 
@@ -20,6 +21,9 @@ class PlanoAlimentar extends Model {
   public criado_em!: Date;
   public atualizado_em!: Date;
   public deletado_em?: Date;
+
+  // Associações
+  public refeicoes?: Refeicao[];
 }
 
 PlanoAlimentar.init(

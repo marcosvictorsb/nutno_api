@@ -28,6 +28,12 @@ export const listarPacientes = async (
 
     const statusQuery = req.query.status;
     const buscaQuery = req.query.busca;
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(
+      100,
+      Math.max(1, parseInt(req.query.limit as string) || 20)
+    );
+    const offset = (page - 1) * limit;
 
     const where: {
       id_nutricionista: number;
@@ -53,22 +59,36 @@ export const listarPacientes = async (
     logger.info('Listando pacientes com filtros', {
       id_nutricionista,
       filtros: where,
+      pagina: page,
+      limite: limit,
     });
 
-    const pacientes = await Paciente.findAll({
+    const { count, rows: pacientes } = await Paciente.findAndCountAll({
       where,
       order: [['criado_em', 'DESC']],
+      limit,
+      offset,
     });
+
+    const totalPages = Math.ceil(count / limit);
 
     logger.info('Pacientes listados com sucesso', {
       id_nutricionista,
-      total: pacientes.length,
+      total: count,
+      pagina: page,
+      totalPaginas: totalPages,
     });
 
     return res.status(200).json({
       success: true,
       message: 'Pacientes listados com sucesso',
       data: pacientes,
+      pagination: {
+        total: count,
+        pagina: page,
+        limite: limit,
+        totalPaginas: totalPages,
+      },
     });
   } catch (error: Error | any) {
     logger.error('Erro ao listar pacientes', { error });

@@ -10,6 +10,11 @@ import formularioPublicoRoutes from './Dominios/Anamnese/routes/formulario.publi
 import anamneseRoutes from './Dominios/Anamnese/routes/anamnese.routes';
 import medidasRoutes from './Dominios/Medidas/routes/medidas.routes';
 import alimentosRoutes from './Dominios/Alimentos/routes/alimentos.routes';
+import planosRoutes from './Dominios/PlanoAlimentar/routes/plano.alimentar.routes';
+
+// Importar modelos para inicializar associações
+import './Dominios/Alimentos/models';
+import './Dominios/PlanoAlimentar/models';
 
 const app = express();
 
@@ -22,6 +27,7 @@ app.use(requestIdMiddleware);
 // Rotas públicas PRIMEIRO (sem middleware de autenticação)
 app.use('/', leadRoutes);
 app.use('/', formularioPublicoRoutes);
+app.use('/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
 
 // app.use('/login', nutricionistaRouta);
 

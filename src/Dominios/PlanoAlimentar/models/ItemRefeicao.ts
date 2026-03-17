@@ -1,12 +1,14 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
+import type Refeicao from './Refeicao';
+import type Alimento from '../../Alimentos/models/Alimento';
 
 type UnidadeMedida = 'g' | 'ml' | 'unidade' | 'colher' | 'xicara';
 
 class ItemRefeicao extends Model {
   public id!: number;
-  public id_refeicao!: number;
-  public id_alimento!: number;
+  public refeicao_id!: number;
+  public alimento_id!: number;
   public quantidade!: number;
   public unidade!: UnidadeMedida;
   public calorias_calculadas?: number;
@@ -17,6 +19,10 @@ class ItemRefeicao extends Model {
   public criado_em!: Date;
   public atualizado_em!: Date;
   public deletado_em?: Date;
+
+  // Associações
+  public refeicao?: Refeicao;
+  public alimento?: Alimento;
 }
 
 ItemRefeicao.init(
@@ -26,7 +32,7 @@ ItemRefeicao.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    id_refeicao: {
+    refeicao_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -36,7 +42,7 @@ ItemRefeicao.init(
       onDelete: 'CASCADE',
       onUpdate: 'CASCADE',
     },
-    id_alimento: {
+    alimento_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
