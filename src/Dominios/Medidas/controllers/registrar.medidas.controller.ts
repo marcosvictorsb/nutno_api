@@ -88,6 +88,7 @@ export const registrarMedidas = async (
 ) => {
   try {
     const id_nutricionista = req.user?.id;
+    const { id: id_paciente } = req.params;
 
     logger.info('Requisição para registrar medidas recebida', {
       id_nutricionista,
@@ -103,7 +104,6 @@ export const registrarMedidas = async (
     }
 
     const {
-      id_paciente,
       data_avaliacao,
       peso,
       altura,
@@ -134,16 +134,25 @@ export const registrarMedidas = async (
     } = req.body as RegistrarMediasBody;
 
     // Validações
-    if (!id_paciente || !Number.isInteger(id_paciente) || id_paciente <= 0) {
-      logger.warn('ID de paciente invalido para registrar medidas', {
-        id_nutricionista,
-        id_paciente,
-      });
-      return res.status(400).json({
-        success: false,
-        message: 'ID de paciente invalido',
-      });
-    }
+    console.log({
+      a: !id_paciente,
+      b: !Number.isInteger(id_paciente),
+      c: Number(id_paciente) <= 0,
+    });
+    // if (
+    //   !id_paciente ||
+    //   !Number.isInteger(id_paciente) ||
+    //   Number(id_paciente) <= 0
+    // ) {
+    //   logger.warn('ID de paciente invalido para registrar medidas', {
+    //     id_nutricionista,
+    //     id_paciente,
+    //   });
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'ID de paciente invalido',
+    //   });
+    // }
 
     if (!data_avaliacao) {
       logger.warn('Data de avaliacao nao informada');
@@ -156,7 +165,7 @@ export const registrarMedidas = async (
     // Verificar se paciente existe e pertence ao nutricionista
     const paciente = await Paciente.findOne({
       where: {
-        id: id_paciente,
+        id: Number(id_paciente),
         id_nutricionista,
       },
     });
