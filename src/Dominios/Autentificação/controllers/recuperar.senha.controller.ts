@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import crypto from 'crypto';
 import logger from '../../../config/logger';
-import Nutricionista from '../../Nutricionista/model/nutricionista.model';
+import Nutricionista from '../../Nutricionista/models/nutricionista.model';
 import { sendEmail } from '../../../services/email.service';
 import { ApiResponse } from '../../../types/ApiResponse';
 

@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import logger from '../../../config/logger';
-import Nutricionista from '../../Nutricionista/model/nutricionista.model';
+import Nutricionista from '../../Nutricionista/models/nutricionista.model';
 import Plano from '../../Planos/model/plano.model';
 import Inscricao from '../../Inscricoes/model/inscricao.model';
 import { hashPassword } from '../../../utils/password';

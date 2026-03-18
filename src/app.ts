@@ -3,7 +3,7 @@ import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler';
 import { requestIdMiddleware } from './middlewares/requestId';
 import leadRoutes from './Dominios/Leads/routes/lead.routes';
-// import nutricionistaRouta from './Dominios/Nutricionista/routes/v1/routes';
+import nutricionistaRoutes from './Dominios/Nutricionista/routes/nutricionista.routes';
 import autentificacaoRoutes from './Dominios/Autentificação/routes/autentificacao.routes';
 import pacienteRoutes from './Dominios/Pacientes/routes/paciente.routes';
 import formularioPublicoRoutes from './Dominios/Anamnese/routes/formulario.publico.routes';
@@ -14,6 +14,7 @@ import planosRoutes from './Dominios/PlanoAlimentar/routes/plano.alimentar.route
 
 // Importar modelos para inicializar associações
 import './Dominios/Alimentos/models';
+import './Dominios/Nutricionista/models';
 import './Dominios/PlanoAlimentar/models';
 
 const app = express();
@@ -29,14 +30,13 @@ app.use('/', leadRoutes);
 app.use('/', formularioPublicoRoutes);
 app.use('/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
 
-// app.use('/login', nutricionistaRouta);
-
 // Rotas autenticadas DEPOIS
 app.use('/auth', autentificacaoRoutes);
 app.use('/', pacienteRoutes);
 app.use('/', anamneseRoutes);
 app.use('/', medidasRoutes);
 app.use('/alimentos', alimentosRoutes);
+app.use('/nutricionistas', nutricionistaRoutes);
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);

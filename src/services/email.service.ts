@@ -58,7 +58,7 @@ export async function sendEmail(
 
     const result = await resend.emails.send({
       from: process.env.EMAIL_FROM as string,
-      to: 'marcosvictorsb@gmail.com',
+      to: process.env.NODE_ENV === 'production' ? _to : process.env.DEV_EMAIL as string,
       subject,
       html,
     });

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import logger from '../../../config/logger';
-import Nutricionista from '../../Nutricionista/model/nutricionista.model';
+import Nutricionista from '../../Nutricionista/models/nutricionista.model';
 import Paciente from '../../Pacientes/model/paciente.model';
 import { ApiResponse } from '../../../types/ApiResponse';
 

@@ -5,6 +5,12 @@ class Nutricionista extends Model {
   public id!: number;
   public nome!: string;
   public email!: string;
+  public crn?: string; // Conselho Regional de Nutricionista
+  public telefone?: string;
+  public especialidade?: string;
+  public bio?: string;
+  public ativo!: boolean;
+  public caminho_foto?: string;
   public senha!: string;
   public created_at!: Date;
   public updated_at!: Date;
@@ -27,6 +33,31 @@ Nutricionista.init(
     email: {
       type: DataTypes.STRING(255),
       allowNull: false,
+    },
+    crn: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      unique: true,
+    },
+    telefone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+    },
+    especialidade: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    bio: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    ativo: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+    caminho_foto: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     senha: {
       type: DataTypes.STRING(255),

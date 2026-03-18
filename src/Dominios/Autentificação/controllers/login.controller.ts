@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import logger from '../../../config/logger';
-import Nutricionista from '../../Nutricionista/model/nutricionista.model';
+import Nutricionista from '../../Nutricionista/models/nutricionista.model';
 import { comparePassword } from '../../../utils/password';
 import { generateToken } from '../../../utils/jwt';
 import { ApiResponse } from '../../../types/ApiResponse';
