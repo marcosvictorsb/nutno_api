@@ -26,16 +26,19 @@ export const buscarPlanoAlimentar = async (req: Request, res: Response) => {
       include: [
         {
           model: Refeicao,
+          as: 'refeicoes',
           where: { deletado_em: null },
           required: false,
           include: [
             {
               model: ItemRefeicao,
+              as: 'itens',
               where: { deletado_em: null },
               required: false,
               include: [
                 {
                   model: Alimento,
+                  as: 'alimento',
                   attributes: [
                     'id',
                     'nome',
