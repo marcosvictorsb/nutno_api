@@ -4,9 +4,20 @@ import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
 import Nutricionista from '../models/nutricionista.model';
 
+type ResponseNutricionista = Pick<
+  Nutricionista,
+  | 'nome'
+  | 'email'
+  | 'telefone'
+  | 'especialidade'
+  | 'bio'
+  | 'caminho_foto'
+  | 'crn'
+>;
+
 export const buscarNutricionistas = async (
   req: AuthenticatedRequest,
-  res: Response<ApiResponse<any>>
+  res: Response<ApiResponse<ResponseNutricionista>>
 ) => {
   try {
     const id_nutricionista = req.user?.id;
@@ -29,10 +40,28 @@ export const buscarNutricionistas = async (
 
     const nutricionista = await Nutricionista.findByPk(id_nutricionista);
 
+    if (!nutricionista) {
+      logger.warn('Nutricionista não encontrado', {
+        id_nutricionista,
+      });
+      return res.status(404).json({
+        success: false,
+        message: 'Nutricionista não encontrado',
+      });
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Nutricionistas encontrados',
-      data: nutricionista,
+      data: {
+        nome: nutricionista?.nome,
+        email: nutricionista?.email,
+        telefone: nutricionista?.telefone,
+        especialidade: nutricionista?.especialidade,
+        bio: nutricionista?.bio,
+        caminho_foto: nutricionista?.caminho_foto,
+        crn: nutricionista?.crn,
+      },
     });
   } catch (error) {
     logger.error('Erro ao buscar nutricionistas', {

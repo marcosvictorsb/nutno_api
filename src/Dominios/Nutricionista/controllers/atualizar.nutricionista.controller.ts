@@ -6,16 +6,26 @@ import Nutricionista from '../models/nutricionista.model';
 
 interface AtualizarNutricionistaBody {
   nome?: string;
-  email?: string;
   telefone?: string;
   especialidade?: string;
   bio?: string;
   caminho_foto?: string;
 }
 
+type ResponseNutricionista = Pick<
+  Nutricionista,
+  | 'nome'
+  | 'email'
+  | 'telefone'
+  | 'especialidade'
+  | 'bio'
+  | 'caminho_foto'
+  | 'crn'
+>;
+
 export const atualizarNutricionista = async (
   req: AuthenticatedRequest,
-  res: Response<ApiResponse<Nutricionista>>
+  res: Response<ApiResponse<ResponseNutricionista>>
 ) => {
   try {
     const id_usuario = req.user?.id;
@@ -63,40 +73,14 @@ export const atualizarNutricionista = async (
       });
     }
 
-    const { nome, email, telefone, especialidade, bio, caminho_foto } =
+    const { nome, telefone, especialidade, bio, caminho_foto } =
       req.body as AtualizarNutricionistaBody;
-
-    // Verificar se email já está em uso por outro nutricionista
-    if (email && email !== nutricionista.email) {
-      logger.info('Verificando disponibilidade do novo email', {
-        id_usuario,
-        nutricionista_id,
-        novo_email: email,
-      });
-
-      const emailEmUso = await Nutricionista.findOne({
-        where: { email },
-      });
-
-      if (emailEmUso) {
-        logger.warn('Email já está em uso por outro nutricionista', {
-          id_usuario,
-          nutricionista_id,
-          email,
-        });
-        return res.status(409).json({
-          success: false,
-          message: 'Este email já está em uso',
-        });
-      }
-    }
 
     logger.info('Atualizando dados do nutricionista', {
       id_usuario,
       nutricionista_id,
       campos_atualizados: {
         nome: !!nome,
-        email: !!email,
         telefone: !!telefone,
         especialidade: !!especialidade,
         bio: !!bio,
@@ -106,7 +90,6 @@ export const atualizarNutricionista = async (
 
     // Atualizar campos fornecidos
     if (nome) nutricionista.nome = nome;
-    if (email) nutricionista.email = email;
     if (telefone !== undefined) nutricionista.telefone = telefone;
     if (especialidade !== undefined)
       nutricionista.especialidade = especialidade;
@@ -126,7 +109,15 @@ export const atualizarNutricionista = async (
     return res.status(200).json({
       success: true,
       message: 'Nutricionista atualizado com sucesso',
-      data: nutricionista,
+      data: {
+        nome: nutricionista.nome,
+        email: nutricionista.email,
+        telefone: nutricionista.telefone,
+        especialidade: nutricionista.especialidade,
+        bio: nutricionista.bio,
+        caminho_foto: nutricionista.caminho_foto,
+        crn: nutricionista.crn,
+      },
     });
   } catch (error) {
     logger.error('Erro ao atualizar nutricionista', {
