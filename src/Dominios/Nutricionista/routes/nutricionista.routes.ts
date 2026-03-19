@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../../../middlewares/auth';
+import { uploadFoto, handleUploadError } from '../../../middlewares/upload';
 import {
   criarNutricionista,
   buscarNutricionistas,
@@ -7,6 +8,7 @@ import {
   atualizarNutricionista,
   atualizarDadosPessoais,
   atualizarSeguranca,
+  atualizarFotoNutricionista,
 } from '../controllers';
 
 const router = Router();
@@ -22,6 +24,14 @@ router.put('/dados-pessoais', atualizarDadosPessoais);
 
 // PUT /nutricionistas/seguranca - Atualizar segurança (senha) do nutricionista autenticado
 router.put('/seguranca', atualizarSeguranca);
+
+// PUT /nutricionistas/nutricionista-foto - Atualizar foto do nutricionista autenticado
+router.put(
+  '/foto',
+  uploadFoto.single('foto'),
+  handleUploadError,
+  atualizarFotoNutricionista
+);
 
 // GET /nutricionistas/:id - Obter nutricionista por ID
 router.get('/:id', obterNutricionistaById);

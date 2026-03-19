@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { errorHandler } from './middlewares/errorHandler';
 import { requestIdMiddleware } from './middlewares/requestId';
 import leadRoutes from './Dominios/Leads/routes/lead.routes';
@@ -18,6 +19,9 @@ import './Dominios/Nutricionista/models';
 import './Dominios/PlanoAlimentar/models';
 
 const app = express();
+
+// Servir arquivos estáticos de uploads PRIMEIRO (antes de QUALQUER COISA, até middlewares globais)
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 // Middlewares
 app.use(cors());

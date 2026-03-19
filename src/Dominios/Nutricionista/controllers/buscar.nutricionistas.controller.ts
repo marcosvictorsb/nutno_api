@@ -4,6 +4,17 @@ import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
 import Nutricionista from '../models/nutricionista.model';
 
+// Helper para construir URL completa da foto
+const construirUrlFoto = (
+  req: AuthenticatedRequest,
+  caminhoFoto?: string
+): string | undefined => {
+  if (!caminhoFoto) return undefined;
+  const protocol = req.protocol || 'http';
+  const host = req.get('host');
+  return `${protocol}://${host}/${caminhoFoto}`;
+};
+
 type ResponseNutricionista = Pick<
   Nutricionista,
   | 'nome'
@@ -13,7 +24,7 @@ type ResponseNutricionista = Pick<
   | 'bio'
   | 'caminho_foto'
   | 'crn'
->;
+> & { fotoUrl?: string };
 
 export const buscarNutricionistas = async (
   req: AuthenticatedRequest,
@@ -61,6 +72,7 @@ export const buscarNutricionistas = async (
         bio: nutricionista?.bio,
         caminho_foto: nutricionista?.caminho_foto,
         crn: nutricionista?.crn,
+        fotoUrl: construirUrlFoto(req, nutricionista?.caminho_foto),
       },
     });
   } catch (error) {
@@ -141,10 +153,18 @@ export const obterNutricionistaById = async (
       nome: nutricionista.nome,
     });
 
+    // Construir URL completa da foto
+    const fotoUrl = construirUrlFoto(req, nutricionista.caminho_foto);
+
+    const nutricionistaComFoto = {
+      ...nutricionista.toJSON(),
+      fotoUrl,
+    };
+
     return res.status(200).json({
       success: true,
       message: 'Nutricionista obtido com sucesso',
-      data: nutricionista,
+      data: nutricionistaComFoto,
     });
   } catch (error) {
     logger.error('Erro ao obter nutricionista', {
