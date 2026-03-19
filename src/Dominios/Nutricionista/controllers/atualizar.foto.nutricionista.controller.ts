@@ -78,7 +78,7 @@ export const atualizarFotoNutricionista = async (
     const fotoAnteriorCaminho = nutricionista.caminho_foto;
 
     // Salvar o caminho relativo da foto NOVA (para armazenar no banco)
-    const caminhoRelativo = `uploads/${req.file.filename}`;
+    const caminhoRelativo = `uploads/perfil/${req.file.filename}`;
 
     logger.debug('Atualizando registro no banco de dados com a nova foto', {
       userId: req.user.id,

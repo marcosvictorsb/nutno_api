@@ -4,18 +4,24 @@ import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../config/logger';
 
-// Configurar o caminho de uploads
-const uploadDir = path.join(__dirname, '../uploads');
+// Configurar o caminho base de uploads
+const uploadBaseDir = path.join(__dirname, '../uploads');
 
-// Criar a pasta de uploads se não existir
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Criar a pasta base de uploads se não existir
+if (!fs.existsSync(uploadBaseDir)) {
+  fs.mkdirSync(uploadBaseDir, { recursive: true });
 }
 
-// Configurar armazenamento
-const storage = multer.diskStorage({
+// Crear pasta de perfil
+const perfilDir = path.join(uploadBaseDir, 'perfil');
+if (!fs.existsSync(perfilDir)) {
+  fs.mkdirSync(perfilDir, { recursive: true });
+}
+
+// Configurar armazenamento para fotos de perfil
+const storagePerfil = multer.diskStorage({
   destination: (_req, _file, cb) => {
-    cb(null, uploadDir);
+    cb(null, perfilDir);
   },
   filename: (_req, file, cb) => {
     // Gerar nome único para o arquivo usando UUID
@@ -47,9 +53,9 @@ const fileFilter = (
   }
 };
 
-// Configurar multer com limite de 5MB
+// Configurar multer com limite de 5MB para fotos de perfil
 export const uploadFoto = multer({
-  storage,
+  storage: storagePerfil,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
