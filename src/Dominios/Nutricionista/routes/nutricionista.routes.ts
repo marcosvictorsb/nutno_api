@@ -13,33 +13,31 @@ import {
 
 const router = Router();
 
-// Todas as rotas requerem autenticação
-router.use(authMiddleware);
-
 // GET /nutricionistas - Buscar nutricionistas com filtros
-router.get('/', buscarNutricionistas);
+router.get('/', authMiddleware, buscarNutricionistas);
 
 // PUT /nutricionistas/dados-pessoais - Atualizar dados pessoais do nutricionista autenticado
-router.put('/dados-pessoais', atualizarDadosPessoais);
+router.put('/dados-pessoais', authMiddleware, atualizarDadosPessoais);
 
 // PUT /nutricionistas/seguranca - Atualizar segurança (senha) do nutricionista autenticado
-router.put('/seguranca', atualizarSeguranca);
+router.put('/seguranca', authMiddleware, atualizarSeguranca);
 
 // PUT /nutricionistas/nutricionista-foto - Atualizar foto do nutricionista autenticado
 router.put(
   '/foto',
+  authMiddleware,
   uploadFoto.single('foto'),
   handleUploadError,
   atualizarFotoNutricionista
 );
 
 // GET /nutricionistas/:id - Obter nutricionista por ID
-router.get('/:id', obterNutricionistaById);
+router.get('/:id', authMiddleware, obterNutricionistaById);
 
 // POST /nutricionistas - Criar novo nutricionista
-router.post('/', criarNutricionista);
+router.post('/', authMiddleware, criarNutricionista);
 
 // PUT /nutricionistas/:id - Atualizar nutricionista
-router.put('/:id', atualizarNutricionista);
+router.put('/:id', authMiddleware, atualizarNutricionista);
 
 export default router;

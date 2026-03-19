@@ -9,15 +9,18 @@ import { enviarFormularioPaciente } from '../controllers/enviar.formulario.contr
 
 const pacienteRoutes = Router();
 
-pacienteRoutes.use(authMiddleware);
-
-pacienteRoutes.post('/pacientes', criarPaciente);
-pacienteRoutes.get('/pacientes', listarPacientes);
-pacienteRoutes.get('/pacientes/:id', buscarPaciente);
-pacienteRoutes.put('/pacientes/:id', atualizarPaciente);
-pacienteRoutes.patch('/pacientes/:id/arquivar', arquivarPaciente);
+pacienteRoutes.post('/pacientes', authMiddleware, criarPaciente);
+pacienteRoutes.get('/pacientes', authMiddleware, listarPacientes);
+pacienteRoutes.get('/pacientes/:id', authMiddleware, buscarPaciente);
+pacienteRoutes.put('/pacientes/:id', authMiddleware, atualizarPaciente);
+pacienteRoutes.patch(
+  '/pacientes/:id/arquivar',
+  authMiddleware,
+  arquivarPaciente
+);
 pacienteRoutes.post(
   '/pacientes/:id/enviar-formulario',
+  authMiddleware,
   enviarFormularioPaciente
 );
 

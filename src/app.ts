@@ -33,9 +33,9 @@ app.use(requestIdMiddleware);
 app.use('/', leadRoutes);
 app.use('/', formularioPublicoRoutes);
 app.use('/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
+app.use('/auth', autentificacaoRoutes);
 
 // Rotas autenticadas DEPOIS
-app.use('/auth', autentificacaoRoutes);
 app.use('/', pacienteRoutes);
 app.use('/', anamneseRoutes);
 app.use('/', medidasRoutes);

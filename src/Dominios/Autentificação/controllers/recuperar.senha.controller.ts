@@ -28,6 +28,9 @@ export const recuperarSenha = async (
     }
 
     // Buscar nutricionista pelo email
+    logger.info('Buscando nutricionista pelo email para recuperação de senha', {
+      email,
+    });
     const nutricionista = await Nutricionista.findOne({ where: { email } });
 
     if (!nutricionista) {
@@ -41,6 +44,7 @@ export const recuperarSenha = async (
     }
 
     // Gerar token aleatório de reset (24 horas de validade)
+    logger.info('Gerando token de recuperação de senha', { email });
     const resetToken = crypto.randomBytes(32).toString('hex');
     const resetTokenHash = crypto
       .createHash('sha256')
@@ -49,27 +53,30 @@ export const recuperarSenha = async (
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 horas
 
     // Salvar token no banco
+    logger.info('Salvando token de recuperação de senha no banco de dados', {
+      email,
+      resetTokenHash,
+      expiresAt,
+    });
+
     await nutricionista.update({
       reset_password_token: resetTokenHash,
       reset_password_expires: expiresAt,
     });
 
-    const resetUrl = `${process.env.APP_URL || 'http://localhost:3000'}/reset-senha/${resetToken}`;
+    const resetUrl = `${process.env.APP_URL}/reset-senha/${resetToken}`;
 
     // Enviar email usando template
     try {
-      logger.info('Email vai ser enviado');
-      if (process.env.NODE_ENV === 'production') {
-        await sendEmail(
-          email,
-          '🔐 Recupere sua Senha - Nutno',
-          'recuperar-senha',
-          {
-            NOME: nutricionista.nome,
-            LINK_RESET: resetUrl,
-          }
-        );
-      }
+      await sendEmail(
+        email,
+        '🔐 Recupere sua Senha - Nutno',
+        'recuperar-senha',
+        {
+          NOME: nutricionista.nome,
+          LINK_RESET: resetUrl,
+        }
+      );
 
       logger.info('Email de recuperação de senha enviado com sucesso', {
         email,
@@ -79,6 +86,13 @@ export const recuperarSenha = async (
         email,
         error: emailError,
       });
+
+      logger.info(
+        'Limpando token de recuperação de senha do banco de dados devido a falha no envio de email',
+        {
+          email,
+        }
+      );
 
       await nutricionista.update({
         reset_password_token: null,

@@ -7,19 +7,16 @@ import { deletarAlimento } from '../controllers/deletar.alimento.controller';
 
 const router = Router();
 
-// Todas as rotas requerem autenticação
-router.use(authMiddleware);
-
 // GET /alimentos - Buscar alimentos com filtros
-router.get('/', buscarAlimentos);
+router.get('/', authMiddleware, buscarAlimentos);
 
 // POST /alimentos - Criar novo alimento personalizado
-router.post('/', criarAlimento);
+router.post('/', authMiddleware, criarAlimento);
 
 // PUT /alimentos/:id - Atualizar alimento personalizado
-router.put('/:id', atualizarAlimento);
+router.put('/:id', authMiddleware, atualizarAlimento);
 
 // DELETE /alimentos/:id - Deletar alimento personalizado
-router.delete('/:id', deletarAlimento);
+router.delete('/:id', authMiddleware, deletarAlimento);
 
 export default router;

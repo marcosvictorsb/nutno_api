@@ -8,21 +8,31 @@ import { evoluçãoMedidas } from '../controllers/evolucao.medidas.controller';
 
 const medidasRoutes = Router();
 
-medidasRoutes.use(authMiddleware);
-
 // POST   /pacientes/:id/medidas
-medidasRoutes.post('/pacientes/:id/medidas', registrarMedidas);
+medidasRoutes.post('/pacientes/:id/medidas', authMiddleware, registrarMedidas);
 
 // GET    /pacientes/:id/medidas
-medidasRoutes.get('/pacientes/:id/medidas', listarMedidas);
+medidasRoutes.get('/pacientes/:id/medidas', authMiddleware, listarMedidas);
 
 // GET    /pacientes/:id/medidas/evolucao
-medidasRoutes.get('/pacientes/:id/medidas/evolucao', evoluçãoMedidas);
+medidasRoutes.get(
+  '/pacientes/:id/medidas/evolucao',
+  authMiddleware,
+  evoluçãoMedidas
+);
 
 // GET    /pacientes/:id/medidas/:medidaId
-medidasRoutes.get('/pacientes/:id/medidas/:medidaId', buscarMedida);
+medidasRoutes.get(
+  '/pacientes/:id/medidas/:medidaId',
+  authMiddleware,
+  buscarMedida
+);
 
 // DELETE /pacientes/:id/medidas/:medidaId
-medidasRoutes.delete('/pacientes/:id/medidas/:medidaId', deletarMedida);
+medidasRoutes.delete(
+  '/pacientes/:id/medidas/:medidaId',
+  authMiddleware,
+  deletarMedida
+);
 
 export default medidasRoutes;
