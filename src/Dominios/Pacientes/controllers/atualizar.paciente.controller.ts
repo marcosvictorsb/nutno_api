@@ -143,7 +143,7 @@ export const atualizarPaciente = async (
           return res.status(409).json({
             success: false,
             message:
-              'Ja existe paciente com este email para este nutricionista',
+              'Você já possui paciente com esse email. Por favor, utilize outro email.',
           });
         }
       }

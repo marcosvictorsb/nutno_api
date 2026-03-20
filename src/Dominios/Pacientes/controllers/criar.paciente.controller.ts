@@ -73,7 +73,7 @@ export const criarPaciente = async (
 
       if (pacienteComMesmoEmail) {
         logger.warn(
-          'Ja existe paciente com este email para este nutricionista',
+          'Você já possui paciente com esse email. Por favor, utilize outro email.',
           {
             id_nutricionista,
             email: emailNormalizado,
@@ -81,7 +81,8 @@ export const criarPaciente = async (
         );
         return res.status(409).json({
           success: false,
-          message: 'Ja existe paciente com este email para este nutricionista',
+          message:
+            'Você já possui paciente com esse email. Por favor, utilize outro email.',
         });
       }
     }

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../../../middlewares/auth';
 import { buscarAnamnese } from '../controllers/buscar.anamnese.controller';
 import { atualizarAnamnese } from '../controllers/atualizar.anamnese.controller';
+import { enviarFormularioAnamnese } from '../controllers/enviar-formulario.controller';
 
 const anamneseRoutes = Router();
 
@@ -11,5 +12,6 @@ anamneseRoutes.put(
   authMiddleware,
   atualizarAnamnese
 );
+anamneseRoutes.post('/enviar-formulario', enviarFormularioAnamnese);
 
 export default anamneseRoutes;
