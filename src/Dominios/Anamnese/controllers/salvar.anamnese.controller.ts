@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import logger from '../../../config/logger';
-import Anamnese from '../model/anamnese.model';
-import Paciente from '../../Pacientes/model/paciente.model';
 import { ApiResponse } from '../../../types/ApiResponse';
+import Paciente from '../../Pacientes/model/paciente.model';
+import Anamnese from '../model/anamnese.model';
 import {
   extrairCamposAnamnese,
   payloadAnamneseVazio,
@@ -68,6 +68,8 @@ export const salvarAnamnesePublica = async (
     await paciente.update({
       formulario_preenchido: true,
       formulario_preenchido_em: new Date(),
+      data_nascimento: payload.data_nascimento || paciente.data_nascimento,
+      sexo: payload.sexo || paciente.sexo,
     });
 
     logger.info('Anamnese salva via formulario publico', {
