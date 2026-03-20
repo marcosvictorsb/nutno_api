@@ -2,8 +2,8 @@ import { Response } from 'express';
 import logger from '../../../config/logger';
 import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
-import Medidas from '../model/medidas.model';
 import Paciente from '../../Pacientes/model/paciente.model';
+import Medidas from '../model/medidas.model';
 
 interface RegistrarMediasBody {
   id_paciente: number;
@@ -31,6 +31,8 @@ interface RegistrarMediasBody {
   pressao_arterial_sistolica?: number;
   pressao_arterial_diastolica?: number;
   frequencia_cardiaca?: number;
+  tmb?: number;
+  gasto_energetico_total?: number;
   nivel_atividade?:
     | 'sedentario'
     | 'leve'
@@ -38,6 +40,7 @@ interface RegistrarMediasBody {
     | 'intenso'
     | 'muito_intenso';
   observacoes?: string;
+  imc?: number;
   fotos?: string[];
 }
 
@@ -131,6 +134,9 @@ export const registrarMedidas = async (
       nivel_atividade,
       observacoes,
       fotos,
+      imc,
+      tmb,
+      gasto_energetico_total,
     } = req.body as RegistrarMediasBody;
 
     // Validações
@@ -182,14 +188,7 @@ export const registrarMedidas = async (
     }
 
     // Calcular valores automaticamente
-    let imc = null;
     let relacao_cintura_quadril = null;
-    let tmb = null;
-    let gasto_energetico_total = null;
-
-    if (peso && altura) {
-      imc = calcularIMC(peso, altura);
-    }
 
     if (circunferencia_cintura && circunferencia_quadril) {
       relacao_cintura_quadril = calcularRCQ(
@@ -198,28 +197,13 @@ export const registrarMedidas = async (
       );
     }
 
-    if (peso && altura && paciente.data_nascimento) {
-      const hoje = new Date();
-      const nascimento = new Date(paciente.data_nascimento);
-      let idade = hoje.getFullYear() - nascimento.getFullYear();
-      const mes = hoje.getMonth() - nascimento.getMonth();
-      if (mes < 0 || (mes === 0 && hoje.getDate() < nascimento.getDate())) {
-        idade--;
-      }
-      tmb = calcularTMB(peso, altura, idade, paciente.sexo || 'M');
-
-      if (nivel_atividade) {
-        gasto_energetico_total = calcularGET(tmb, nivel_atividade);
-      }
-    }
-
     const novaAvaliacao = await Medidas.create({
-      id_paciente,
+      id_paciente: Number(id_paciente),
       id_nutricionista,
       data_avaliacao,
       peso: peso || null,
       altura: altura || null,
-      imc,
+      imc: imc || null,
       perc_gordura_corporal: perc_gordura_corporal || null,
       perc_massa_magra: perc_massa_magra || null,
       idade_metabolica: idade_metabolica || null,
@@ -242,8 +226,8 @@ export const registrarMedidas = async (
       pressao_arterial_sistolica: pressao_arterial_sistolica || null,
       pressao_arterial_diastolica: pressao_arterial_diastolica || null,
       frequencia_cardiaca: frequencia_cardiaca || null,
-      tmb,
-      gasto_energetico_total,
+      tmb: tmb || null,
+      gasto_energetico_total: gasto_energetico_total || null,
       nivel_atividade: nivel_atividade || null,
       observacoes: observacoes || null,
       fotos: fotos || [],

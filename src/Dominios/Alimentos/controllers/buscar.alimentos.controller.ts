@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { Op, QueryTypes } from 'sequelize';
-import sequelize from '../../../infra/database/model/sequelize.config';
 import logger from '../../../config/logger';
+import sequelize from '../../../infra/database/model/sequelize.config';
 import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
 import { Alimento } from '../models';
@@ -66,18 +66,36 @@ export const buscarAlimentos = async (
       where.fonte = fonte;
     }
 
-    // Filtro de busca com FULLTEXT
+    // Filtro de busca por múltiplas palavras-chave
     let alimentosBuscados;
 
     if (busca) {
       try {
-        // Buscar com LIKE (começa com)
-        logger.info('Realizando busca por alimentos', {
+        // Quebrar busca em múltiplas palavras
+        const palavras = busca
+          .toLowerCase()
+          .split(/[\s+]+/) // Dividir por espaços ou +
+          .filter((p) => p.length > 0);
+
+        logger.info('Realizando busca por alimentos com múltiplas palavras', {
           id_nutricionista,
-          busca,
+          buscaOriginal: busca,
+          palavrasChave: palavras,
+          quantidadePalavras: palavras.length,
           grupo,
           fonte,
         });
+
+        // Se é apenas 1 palavra, procura no COMEÇO (LIKE palavra%)
+        // Se são múltiplas palavras, procura em QUALQUER lugar (LIKE %palavra%);
+        const isUmaUnicaPalavra = palavras.length === 1;
+        const condicoesPalavras = palavras
+          .map(() =>
+            isUmaUnicaPalavra
+              ? 'AND LOWER(nome) LIKE ?'
+              : 'AND LOWER(nome) LIKE ?'
+          )
+          .join(' ');
 
         alimentosBuscados = await sequelize.query(
           `
@@ -86,8 +104,9 @@ export const buscarAlimentos = async (
             AND (id_nutricionista IS NULL OR id_nutricionista = ?)
             ${grupo ? 'AND grupo = ?' : ''}
             ${fonte ? 'AND fonte = ?' : ''}
-            AND nome LIKE ?
+            ${condicoesPalavras}
           ORDER BY 
+            CASE WHEN LOWER(nome) LIKE ? THEN 0 ELSE 1 END,
             CASE WHEN fonte IN ('taco', 'tbca') THEN 0 ELSE 1 END,
             nome ASC
           LIMIT ? OFFSET ?
@@ -97,7 +116,10 @@ export const buscarAlimentos = async (
               id_nutricionista,
               ...(grupo ? [grupo] : []),
               ...(fonte ? [fonte] : []),
-              `${busca}%`,
+              // Se é uma palavra, começa com. Se são múltiplas, contém
+              ...palavras.map((p) => (isUmaUnicaPalavra ? `${p}%` : `%${p}%`)),
+              // Adiciona o padrão de começo para ordenação (apenas primeira palavra)
+              `${palavras[0]}%`,
               limite,
               offset,
             ],
@@ -105,22 +127,45 @@ export const buscarAlimentos = async (
           }
         );
 
-        logger.info('Busca retornou resultados', {
+        logger.info('Busca por múltiplas palavras retornou resultados', {
           id_nutricionista,
-          busca,
+          buscaOriginal: busca,
+          palavrasChave: palavras,
+          quantidadePalavras: palavras.length,
+          modoUmaPalavra: isUmaUnicaPalavra,
           grupo,
           fonte,
           resultados: alimentosBuscados.length,
         });
       } catch (error) {
-        logger.warn('Erro ao fazer busca, usando ORM', { error });
+        logger.warn('Erro ao fazer busca com múltiplas palavras, usando ORM', {
+          error,
+        });
         // Fallback para ORM
+        const palavras = busca
+          .toLowerCase()
+          .split(/[\s+]+/)
+          .filter((p) => p.length > 0);
+
+        const isUmaUnicaPalavra = palavras.length === 1;
+        const padroesBusca = palavras.map((p) => ({
+          nome: isUmaUnicaPalavra
+            ? { [Op.like]: `${p}%` }
+            : { [Op.like]: `%${p}%` },
+        }));
+
         alimentosBuscados = await Alimento.findAll({
           where: {
             ...where,
-            nome: { [Op.like]: `${busca}%` },
+            [Op.and]: padroesBusca,
           },
           order: [
+            [
+              sequelize.literal(
+                `CASE WHEN LOWER(nome) LIKE '${palavras[0]}%' THEN 0 ELSE 1 END`
+              ),
+              'ASC',
+            ],
             [
               sequelize.literal(
                 `CASE WHEN fonte IN ('taco', 'tbca') THEN 0 ELSE 1 END`
@@ -151,11 +196,29 @@ export const buscarAlimentos = async (
     }
 
     // Buscar total de registros
+    let totalWhere = { ...where };
+
+    if (busca) {
+      const palavras = busca
+        .toLowerCase()
+        .split(/[\s+]+/)
+        .filter((p) => p.length > 0);
+
+      const isUmaUnicaPalavra = palavras.length === 1;
+      const padroesBusca = palavras.map((p) => ({
+        nome: isUmaUnicaPalavra
+          ? { [Op.like]: `${p}%` }
+          : { [Op.like]: `%${p}%` },
+      }));
+
+      totalWhere = {
+        ...totalWhere,
+        [Op.and]: padroesBusca,
+      };
+    }
+
     const total = await Alimento.count({
-      where: {
-        ...where,
-        ...(busca && { nome: { [Op.like]: `${busca}%` } }),
-      },
+      where: totalWhere,
     });
 
     const totalPaginas = Math.ceil(total / limite);
