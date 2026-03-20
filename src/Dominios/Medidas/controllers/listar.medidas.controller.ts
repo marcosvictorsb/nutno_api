@@ -2,8 +2,8 @@ import { Response } from 'express';
 import logger from '../../../config/logger';
 import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
-import Medidas from '../model/medidas.model';
 import Paciente from '../../Pacientes/model/paciente.model';
+import Medidas from '../model/medidas.model';
 
 interface ListarMediasQuery {
   pagina?: string;
@@ -77,10 +77,10 @@ export const listarMedidas = async (
     );
     const offset = (numeroPagina - 1) * quantidadePorPagina;
 
-    const order: any[] =
-      ordenarPor === 'data_asc'
-        ? [['data_avaliacao', 'ASC']]
-        : [['data_avaliacao', 'DESC']];
+    // const order: any[] =
+    //   ordenarPor === 'data_asc'
+    //     ? [['data_avaliacao', 'ASC']]
+    //     : [['data_avaliacao', 'DESC']];
 
     logger.info('Buscando medidas do paciente', {
       id_nutricionista,
@@ -94,7 +94,7 @@ export const listarMedidas = async (
         id_paciente,
         id_nutricionista,
       },
-      order,
+      order: [['id', 'DESC']],
       limit: quantidadePorPagina,
       offset,
     });

@@ -2,9 +2,8 @@ import { Response } from 'express';
 import logger from '../../../config/logger';
 import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
-import Anamnese from '../model/anamnese.model';
 import Paciente from '../../Pacientes/model/paciente.model';
-import { log } from 'node:console';
+import Anamnese from '../model/anamnese.model';
 
 export const buscarAnamnese = async (
   req: AuthenticatedRequest,
@@ -79,6 +78,7 @@ export const buscarAnamnese = async (
       where: {
         id_paciente,
       },
+      order: [['id', 'DESC']],
     });
 
     if (!anamnese) {

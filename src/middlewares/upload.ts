@@ -1,6 +1,6 @@
+import fs from 'fs';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../config/logger';
 
@@ -12,16 +12,35 @@ if (!fs.existsSync(uploadBaseDir)) {
   fs.mkdirSync(uploadBaseDir, { recursive: true });
 }
 
-// Crear pasta de perfil
+// Crear pasta de perfil nutricionista
 const perfilDir = path.join(uploadBaseDir, 'perfil');
 if (!fs.existsSync(perfilDir)) {
   fs.mkdirSync(perfilDir, { recursive: true });
+}
+
+// Criar pasta de perfil de pacientes
+const perfilPacientesDir = path.join(uploadBaseDir, 'pacientes', 'perfil');
+if (!fs.existsSync(perfilPacientesDir)) {
+  fs.mkdirSync(perfilPacientesDir, { recursive: true });
 }
 
 // Configurar armazenamento para fotos de perfil
 const storagePerfil = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, perfilDir);
+  },
+  filename: (_req, file, cb) => {
+    // Gerar nome único para o arquivo usando UUID
+    const ext = path.extname(file.originalname);
+    const uniqueId = uuidv4();
+    cb(null, `${uniqueId}${ext}`);
+  },
+});
+
+// Configurar armazenamento para fotos de perfil de pacientes
+const storagePerfilPacientes = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, perfilPacientesDir);
   },
   filename: (_req, file, cb) => {
     // Gerar nome único para o arquivo usando UUID
@@ -56,6 +75,15 @@ const fileFilter = (
 // Configurar multer com limite de 5MB para fotos de perfil
 export const uploadFoto = multer({
   storage: storagePerfil,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
+
+// Configurar multer com limite de 5MB para fotos de perfil de pacientes
+export const uploadFotoPaciente = multer({
+  storage: storagePerfilPacientes,
   fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB
