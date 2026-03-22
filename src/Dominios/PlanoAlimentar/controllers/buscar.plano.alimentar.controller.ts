@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import logger from '../../../config/logger';
+import Alimento from '../../Alimentos/models/Alimento';
+import ItemRefeicao from '../models/ItemRefeicao';
 import PlanoAlimentar from '../models/PlanoAlimentar';
 import Refeicao from '../models/Refeicao';
-import ItemRefeicao from '../models/ItemRefeicao';
-import Alimento from '../../Alimentos/models/Alimento';
 
 export const buscarPlanoAlimentar = async (req: Request, res: Response) => {
   try {
@@ -56,8 +56,15 @@ export const buscarPlanoAlimentar = async (req: Request, res: Response) => {
         },
       ],
     });
+    console.log('---------------------------')
+    console.log(plano)
 
     if (!plano) {
+      logger.info('Plano alimentar não encontrado', {
+        id_nutricionista,
+        id_paciente,
+        id_plano: planoId,
+      });
       return res.status(404).json({ erro: 'Plano alimentar não encontrado' });
     }
 
