@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import logger from '../../../config/logger';
+import Alimento from '../../Alimentos/models/Alimento';
+import ItemRefeicao from '../models/ItemRefeicao';
 import PlanoAlimentar from '../models/PlanoAlimentar';
 import Refeicao from '../models/Refeicao';
-import ItemRefeicao from '../models/ItemRefeicao';
-import Alimento from '../../Alimentos/models/Alimento';
-import { log } from 'node:console';
 
 export const criarPlanoAlimentar = async (req: Request, res: Response) => {
   try {
@@ -76,7 +75,7 @@ export const criarPlanoAlimentar = async (req: Request, res: Response) => {
       proteinas_objetivo_pct,
       carboidratos_objetivo_pct,
       gorduras_objetivo_pct,
-      status: 'rascunho',
+      status: 'ativo',
       token_visualizacao: uuidv4(),
     });
 

@@ -31,21 +31,19 @@ export const ativarPlanoAlimentar = async (req: Request, res: Response) => {
     }
 
     // Desativar outros planos ativos do paciente
-    await PlanoAlimentar.update(
-      { status: 'rascunho' },
-      {
-        where: {
-          id_paciente: parseInt(id_paciente as string),
-          status: 'ativo',
-          deletado_em: null,
-        },
-      }
-    );
+    // await PlanoAlimentar.update(
+    //   { status: 'rascunho' },
+    //   {
+    //     where: {
+    //       id_paciente: parseInt(id_paciente as string),
+    //       status: 'ativo',
+    //       deletado_em: null,
+    //     },
+    //   }
+    // );
 
     // Ativar este plano
-    plano.status = 'ativo';
-    plano.enviado_em = new Date();
-    await plano.save();
+    await plano.update({ status: 'ativo', enviado_em: new Date() });
 
     return res.json({
       mensagem: 'Plano alimentar ativado com sucesso',

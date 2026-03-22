@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import logger from '../../../config/logger';
+import { sendEmail } from '../../../services/email.service';
 import { ApiResponse } from '../../../types/ApiResponse';
 import Paciente from '../../Pacientes/model/paciente.model';
-import { sendEmail } from '../../../services/email.service';
 
 interface EnviarFormularioRequest {
   email: string;
+  paciente_id: number;
 }
 
 /**
@@ -17,7 +18,7 @@ export const enviarFormularioAnamnese = async (
   res: Response<ApiResponse<{ enviado: boolean }>>
 ) => {
   try {
-    const { email } = req.body;
+    const { email, paciente_id } = req.body;
     const requestId = req.headers['x-request-id'];
 
     logger.info('Requisição para enviar formulário de anamnese', {
@@ -48,6 +49,7 @@ export const enviarFormularioAnamnese = async (
     const paciente = await Paciente.findOne({
       where: {
         email,
+        id: paciente_id,
       },
     });
 

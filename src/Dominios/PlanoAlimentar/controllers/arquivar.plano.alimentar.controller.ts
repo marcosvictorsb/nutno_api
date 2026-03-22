@@ -39,6 +39,8 @@ export const arquivarPlanoAlimentar = async (req: Request, res: Response) => {
       return res.status(400).json({ erro: 'Plano já está arquivado' });
     }
 
+    await plano.update({ status: 'arquivado' });
+
     logger.info('Plano alimentar arquivado com sucesso', {
       id_nutricionista,
       id_plano: plano.id,

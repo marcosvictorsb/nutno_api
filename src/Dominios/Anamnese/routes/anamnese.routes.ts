@@ -12,6 +12,6 @@ anamneseRoutes.put(
   authMiddleware,
   atualizarAnamnese
 );
-anamneseRoutes.post('/enviar-formulario', enviarFormularioAnamnese);
+anamneseRoutes.post('/anamnese/enviar-formulario', enviarFormularioAnamnese);
 
 export default anamneseRoutes;
