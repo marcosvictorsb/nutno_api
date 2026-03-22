@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import logger from '../../../config/logger';
+import Alimento from '../../Alimentos/models/Alimento';
+import ItemRefeicao from '../models/ItemRefeicao';
 import PlanoAlimentar from '../models/PlanoAlimentar';
 import Refeicao from '../models/Refeicao';
-import ItemRefeicao from '../models/ItemRefeicao';
-import Alimento from '../../Alimentos/models/Alimento';
 
 export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
   try {
@@ -11,7 +12,20 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
     const { nome, objetivo, observacoes, calorias_objetivo, refeicoes, itens } =
       req.body;
 
+    logger.info('Requisição para atualizar plano alimentar recebida', {
+      id_nutricionista,
+      id_paciente,
+      id_plano: planoId,
+      nome,
+      objetivo,
+    });
+
     // Buscar plano
+    logger.info('Buscando plano alimentar para atualização', {
+      id_nutricionista,
+      id_paciente,
+      id_plano: planoId,
+    });
     const plano = await PlanoAlimentar.findOne({
       where: {
         id: planoId,
@@ -22,6 +36,11 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
     });
 
     if (!plano) {
+      logger.info('Plano alimentar não encontrado para atualização', {
+        id_nutricionista,
+        id_paciente,
+        id_plano: planoId,
+      });
       return res.status(404).json({ erro: 'Plano alimentar não encontrado' });
     }
 
@@ -38,6 +57,12 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
       for (const refeicaoData of refeicoes) {
         if (refeicaoData.id) {
           // Atualizar refeição existente
+          logger.info('Atualizando refeição existente', {
+            id_nutricionista,
+            id_paciente,
+            id_plano: planoId,
+            id_refeicao: refeicaoData.id,
+          });
           const refeicao = await Refeicao.findByPk(refeicaoData.id);
           if (refeicao) {
             if (refeicaoData.nome) refeicao.nome = refeicaoData.nome;
@@ -46,6 +71,12 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
             if (refeicaoData.ordem) refeicao.ordem = refeicaoData.ordem;
             if (refeicaoData.observacoes !== undefined)
               refeicao.observacoes = refeicaoData.observacoes;
+            logger.info('Salvando refeição atualizada', {
+              id_nutricionista,
+              id_paciente,
+              id_plano: planoId,
+              id_refeicao: refeicaoData.id,
+            });
             await refeicao.save();
           }
         }
@@ -53,6 +84,12 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
     }
 
     // Buscar plano atualizado
+    logger.info('Buscando plano alimentar atualizado', {
+      id_nutricionista,
+      id_paciente,
+      id_plano: planoId,
+    });
+
     const planoAtualizado = await PlanoAlimentar.findByPk(plano.id, {
       include: [
         {
@@ -83,7 +120,12 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
       dados: planoAtualizado,
     });
   } catch (erro) {
-    console.error('Erro ao atualizar plano:', erro);
+    logger.error('Erro ao atualizar plano alimentar', {
+      id_nutricionista: (req as any).user?.id,
+      id_paciente: req.params.id_paciente,
+      id_plano: req.params.planoId,
+      erro,
+    });
     return res.status(500).json({ erro: 'Erro ao atualizar plano alimentar' });
   }
 };
