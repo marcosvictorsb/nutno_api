@@ -302,7 +302,7 @@ export function gerarHtmlPlanoAlimentar(dados: any): string {
 
             .resumo-grid {
                 display: grid;
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
             }
 
@@ -483,50 +483,6 @@ export function gerarHtmlPlanoAlimentar(dados: any): string {
                 font-weight: 700;
                 color: var(--verde-escuro);
             }
-
-            .totais-dia {
-                border: 1px solid var(--verde-primario);
-                border-radius: 8px;
-                padding: 16px;
-                margin-top: 24px;
-                page-break-inside: avoid;
-            }
-
-            .totais-titulo {
-                font-weight: 700;
-                font-size: 13px;
-                margin-bottom: 12px;
-                color: var(--cinza-texto);
-            }
-
-            .totais-grid {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            .total-item {
-                flex: 1;
-                padding: 0 12px;
-                border-right: 1px solid var(--cinza-borda);
-            }
-
-            .total-item:last-child {
-                border-right: none;
-            }
-
-            .total-valor {
-                font-size: 14px;
-                font-weight: 700;
-                color: var(--verde-primario);
-                display: block;
-            }
-
-            .total-label {
-                font-size: 10px;
-                color: #6b7280;
-            }
-
-            .mensagem-box {
                 border-left: 4px solid var(--verde-primario);
                 background-color: #f0fdf4;
                 border-radius: 8px;
@@ -583,20 +539,12 @@ export function gerarHtmlPlanoAlimentar(dados: any): string {
                 </div>
                 <div class="resumo-grid">
                     <div class="resumo-card">
-                        <label>Meta Calórica</label>
-                        <div class="valor">${caloriasMeta.toFixed(0)}<span class="valor-small">kcal</span></div>
-                    </div>
-                    <div class="resumo-card">
                         <label>Objetivo</label>
                         <div class="valor valor-small">${plano.objetivo}</div>
                     </div>
                     <div class="resumo-card">
                         <label>Refeições/dia</label>
                         <div class="valor">${plano.refeicoes?.length || 0}</div>
-                    </div>
-                    <div class="resumo-card">
-                        <label>Macros</label>
-                        <div class="valor-small">P ${proteinasMeta.toFixed(0)}% • C ${carboidratosMeta.toFixed(0)}% • G ${gordurasMeta.toFixed(0)}%</div>
                     </div>
                 </div>
             </div>
@@ -636,32 +584,6 @@ export function gerarHtmlPlanoAlimentar(dados: any): string {
 
             <h3 class="section-title">Plano Alimentar Detalhado</h3>
             ${htmlRefeicoes}
-
-            <div class="totais-dia">
-                <div class="totais-titulo">Total do Dia</div>
-                <div class="totais-grid">
-                    <div class="total-item">
-                        <span class="total-valor">${totalCalorias.toFixed(0)} kcal</span>
-                        <span class="total-label">de ${caloriasMeta.toFixed(0)} kcal meta</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-valor">${totalProteinas.toFixed(1)}g</span>
-                        <span class="total-label">de ${proteinasMetaGramas.toFixed(0)}g meta (Prot)</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-valor">${totalCarboidratos.toFixed(1)}g</span>
-                        <span class="total-label">de ${carboidratosMetaGramas.toFixed(0)}g meta (Carb)</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-valor">${totalGorduras.toFixed(1)}g</span>
-                        <span class="total-label">de ${gordurasMetaGramas.toFixed(0)}g meta (Gord)</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-valor">${plano.refeicoes?.length || 0}</span>
-                        <span class="total-label">refeições planejadas</span>
-                    </div>
-                </div>
-            </div>
 
             ${
               plano.observacoes
