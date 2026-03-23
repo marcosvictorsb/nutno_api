@@ -19,7 +19,8 @@
     "seed:taco": "ts-node scripts/seed-taco.ts",
     "seed:tbca": "ts-node scripts/seed-tbca.ts",
     "seed:dedup": "ts-node scripts/deduplicar-alimentos.ts",
-    "seed:alimentos": "npm run seed:taco && npm run seed:tbca && npm run seed:dedup"
+    "seed:alimentos": "npm run seed:taco && npm run seed:tbca && npm run seed:dedup",
+    "deploy": "ts-node scripts/deploy.ts"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "glob": "^10.3.10",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
     "mysql2": "^3.19.0",
