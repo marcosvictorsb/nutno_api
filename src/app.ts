@@ -25,7 +25,7 @@ dotenv.config({ quiet: true }); // ← Carrega .env DEPOIS
 const app = express();
 
 // Servir arquivos estáticos de uploads PRIMEIRO (antes de QUALQUER COISA, até middlewares globais)
-app.use('/uploads', express.static(path.join(__dirname, './uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Middlewares
 app.use(cors(getCorsOptions()));

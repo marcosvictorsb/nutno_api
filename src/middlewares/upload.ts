@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import logger from '../config/logger';
 
 // Configurar o caminho base de uploads
-const uploadBaseDir = path.join(__dirname, '../uploads');
+const uploadBaseDir = path.join(__dirname, '../../uploads');
 
 // Criar a pasta base de uploads se não existir
 if (!fs.existsSync(uploadBaseDir)) {
