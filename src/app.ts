@@ -35,16 +35,16 @@ app.use(requestIdMiddleware);
 // Rotas
 // Rotas públicas PRIMEIRO (sem middleware de autenticação)
 app.use('/', leadRoutes);
-app.use('/', formularioPublicoRoutes);
-app.use('/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
-app.use('/auth', autentificacaoRoutes);
+app.use('/api/', formularioPublicoRoutes);
+app.use('/api/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
+app.use('/api/auth', autentificacaoRoutes);
 
 // Rotas autenticadas DEPOIS
-app.use('/', pacienteRoutes);
-app.use('/', anamneseRoutes);
-app.use('/', medidasRoutes);
-app.use('/alimentos', alimentosRoutes);
-app.use('/nutricionistas', nutricionistaRoutes);
+app.use('/api/', pacienteRoutes);
+app.use('/api/', anamneseRoutes);
+app.use('/api/', medidasRoutes);
+app.use('/api/alimentos', alimentosRoutes);
+app.use('/api/nutricionistas', nutricionistaRoutes);
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
