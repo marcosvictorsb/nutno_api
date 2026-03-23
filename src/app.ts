@@ -1,4 +1,5 @@
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 import getCorsOptions from './config/cors';
@@ -18,6 +19,8 @@ import { requestIdMiddleware } from './middlewares/requestId';
 import './Dominios/Alimentos/models';
 import './Dominios/Nutricionista/models';
 import './Dominios/PlanoAlimentar/models';
+
+dotenv.config({ quiet: true }); // ← Carrega .env DEPOIS
 
 const app = express();
 
