@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
 import crypto from 'crypto';
+import { Request, Response } from 'express';
 import logger from '../../../config/logger';
 import { ApiResponse } from '../../../types/ApiResponse';
 import Nutricionista from '../../Nutricionista/models/nutricionista.model';
-import { query } from 'winston';
 
 /**
  * Verifica se um token de reset de senha é válido
@@ -14,11 +13,6 @@ export const verificarTokenResetSenha = async (
   res: Response<ApiResponse<{ valido: boolean }>>
 ) => {
   try {
-    console.log({
-      query: req.query,
-      params: req.params,
-    });
-
     const { reset_password_token: token } = req.query;
     const requestId = req.headers['x-request-id'];
 

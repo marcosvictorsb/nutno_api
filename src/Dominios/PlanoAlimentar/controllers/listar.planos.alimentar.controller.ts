@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import logger from '../../../config/logger';
+import Alimento from '../../Alimentos/models/Alimento';
+import ItemRefeicao from '../models/ItemRefeicao';
 import PlanoAlimentar from '../models/PlanoAlimentar';
 import Refeicao from '../models/Refeicao';
-import ItemRefeicao from '../models/ItemRefeicao';
-import Alimento from '../../Alimentos/models/Alimento';
 
 export const listarPlanosAlimentares = async (req: Request, res: Response) => {
   try {
@@ -70,6 +70,30 @@ export const listarPlanosAlimentares = async (req: Request, res: Response) => {
           as: 'refeicoes',
           where: { deletado_em: null },
           required: false,
+          include: [
+            {
+              model: ItemRefeicao,
+              as: 'itens',
+              where: { deletado_em: null },
+              required: false,
+              include: [
+                {
+                  model: Alimento,
+                  as: 'alimento',
+                  attributes: [
+                    'id',
+                    'nome',
+                    'grupo',
+                    'fonte',
+                    'energia_kcal',
+                    'proteina',
+                    'carboidrato',
+                    'lipidios',
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
     });

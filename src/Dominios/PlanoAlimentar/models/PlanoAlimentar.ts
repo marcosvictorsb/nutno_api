@@ -2,7 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
 import type Refeicao from './Refeicao';
 
-type StatusPlano = 'rascunho' | 'ativo' | 'arquivado';
+type StatusPlano = 'rascunho' | 'enviado' | 'ativo' | 'arquivado';
 
 class PlanoAlimentar extends Model {
   public id!: number;
@@ -82,7 +82,7 @@ PlanoAlimentar.init(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM('rascunho', 'ativo', 'arquivado'),
+      type: DataTypes.ENUM('rascunho', 'enviado', 'ativo', 'arquivado'),
       allowNull: false,
       defaultValue: 'rascunho',
     },

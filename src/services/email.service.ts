@@ -10,6 +10,15 @@ export interface TemplateVariables {
 }
 
 /**
+ * Interface para anexos
+ */
+export interface EmailAttachment {
+  filename: string;
+  content: Buffer | string;
+  contentType?: string;
+}
+
+/**
  * Carrega um template de email e substitui as variáveis
  * @param templateName Nome do arquivo do template (sem .html)
  * @param variables Objeto com as variáveis para substituir
@@ -48,7 +57,8 @@ export async function sendEmail(
   _to: string,
   subject: string,
   templateName: string,
-  variables: TemplateVariables
+  variables: TemplateVariables,
+  attachments?: EmailAttachment[]
 ) {
   try {
     const { Resend } = await import('resend');
@@ -56,14 +66,40 @@ export async function sendEmail(
 
     const html = loadEmailTemplate(templateName, variables);
 
-    const result = await resend.emails.send({
+    const emailData: any = {
       from: process.env.EMAIL_FROM as string,
-      to: process.env.NODE_ENV === 'production' ? _to : process.env.DEV_EMAIL as string,
+      to:
+        process.env.NODE_ENV === 'production'
+          ? _to
+          : (process.env.DEV_EMAIL as string),
       subject,
       html,
+    };
+
+    // Adicionar anexos se fornecidos
+    if (attachments && attachments.length > 0) {
+      emailData.attachments = attachments.map((att) => ({
+        filename: att.filename,
+        content: att.content,
+        contentType: att.contentType || 'application/octet-stream',
+      }));
+
+      logger.info('Anexos adicionados ao email', {
+        destinatario: _to,
+        quantidade_anexos: attachments.length,
+        anexos: attachments.map((a) => a.filename),
+      });
+    }
+
+    const result = await resend.emails.send(emailData);
+
+    logger.info('Email enviado com sucesso', {
+      destinatario: _to,
+      assunto: subject,
+      template: templateName,
+      com_anexos: !!attachments?.length,
     });
 
-    console.log(`Email sent to ${_to}:`, result);
     return result;
   } catch (error) {
     logger.error('Erro ao enviar email', { error });

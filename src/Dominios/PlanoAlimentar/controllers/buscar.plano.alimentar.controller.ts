@@ -56,8 +56,6 @@ export const buscarPlanoAlimentar = async (req: Request, res: Response) => {
         },
       ],
     });
-    console.log('---------------------------')
-    console.log(plano)
 
     if (!plano) {
       logger.info('Plano alimentar não encontrado', {

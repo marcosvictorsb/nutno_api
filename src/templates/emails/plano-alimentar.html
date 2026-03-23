@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seu Plano Alimentar - Nutno</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --verde-escuro: #14532d;
+        --verde-primario: #16a34a;
+        --verde-claro: #dcfce7;
+        --verde-medio: #bbf7d0;
+        --branco: #ffffff;
+        --cinza-texto: #374151;
+        --cinza-claro: #f9fafb;
+        --cinza-borda: #e5e7eb;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        font-size: 14px;
+        color: var(--cinza-texto);
+        background-color: #f9fafb;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: white;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 3px solid var(--verde-escuro);
+        padding: 24px;
+        background-color: white;
+      }
+
+      .logo-area h1 {
+        color: var(--verde-escuro);
+        font-size: 24px;
+        margin: 0;
+        font-weight: 700;
+      }
+
+      .logo-area span {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        display: block;
+      }
+
+      .info-area {
+        text-align: right;
+      }
+
+      .info-area .paciente-nome {
+        font-size: 16px;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 4px;
+        color: var(--cinza-texto);
+      }
+
+      .info-area .meta-info {
+        font-size: 11px;
+        color: #6b7280;
+        display: block;
+      }
+
+      /* CONTENT */
+      .content {
+        padding: 32px 24px;
+      }
+
+      /* RESUMO PLANO */
+      .resumo-plano {
+        background: linear-gradient(
+          135deg,
+          var(--verde-escuro) 0%,
+          var(--verde-primario) 100%
+        );
+        color: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .resumo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .resumo-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .badge-status {
+        background-color: var(--verde-claro);
+        color: var(--verde-escuro);
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .resumo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .resumo-card {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      .resumo-card label {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 4px;
+        opacity: 0.9;
+      }
+
+      .resumo-card .valor {
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .resumo-card .valor-small {
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      /* SECTION TITLE */
+      .section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--verde-escuro);
+        border-left: 3px solid var(--verde-primario);
+        padding-left: 8px;
+        margin: 24px 0 16px 0;
+        text-transform: uppercase;
+      }
+
+      /* MACROS GRID */
+      .macros-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .macro-card {
+        background-color: var(--cinza-claro);
+        border-radius: 8px;
+        padding: 14px;
+        border: 1px solid var(--cinza-borda);
+        text-align: center;
+      }
+
+      .macro-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 12px;
+        margin: 0 auto 8px;
+      }
+
+      .icon-p {
+        background-color: var(--verde-primario);
+      }
+      .icon-c {
+        background-color: #3b82f6;
+      }
+      .icon-g {
+        background-color: #f59e0b;
+      }
+
+      .macro-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+
+      .macro-valor {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--cinza-texto);
+        margin-bottom: 4px;
+      }
+
+      .macro-sub {
+        font-size: 11px;
+        color: #6b7280;
+      }
+
+      /* ATTACHMENT BOX */
+      .attachment-box {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 24px 0;
+      }
+
+      .attachment-box h3 {
+        font-size: 14px;
+        font-weight: 700;
+        color: #b45309;
+        margin: 0 0 8px 0;
+      }
+
+      .attachment-box p {
+        font-size: 13px;
+        color: #92400e;
+        margin: 8px 0;
+        line-height: 1.6;
+      }
+
+      /* INFO BOX */
+      .info-box {
+        background-color: #f0fdf4;
+        border-left: 4px solid var(--verde-primario);
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px 0;
+      }
+
+      .info-box h3 {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--verde-escuro);
+        margin: 0 0 8px 0;
+      }
+
+      .info-box p {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        margin: 6px 0;
+        line-height: 1.6;
+      }
+
+      .info-box strong {
+        color: var(--verde-escuro);
+        font-weight: 600;
+      }
+
+      /* TIPS */
+      .tips-list {
+        background-color: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 16px 0;
+      }
+
+      .tips-list h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: #0c4a6e;
+        margin: 0 0 12px 0;
+      }
+
+      .tips-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .tips-list li {
+        font-size: 12px;
+        color: #0c4a6e;
+        margin-bottom: 6px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .tips-list li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        font-weight: bold;
+        color: #3b82f6;
+      }
+
+      /* CLOSING */
+      .closing-text {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        margin: 24px 0;
+        line-height: 1.8;
+      }
+
+      .signature {
+        font-size: 13px;
+        color: var(--cinza-texto);
+        font-weight: 500;
+      }
+
+      .signature strong {
+        color: var(--verde-primario);
+        font-weight: 700;
+      }
+
+      /* FOOTER */
+      .footer {
+        background-color: var(--cinza-claro);
+        border-top: 1px solid var(--cinza-borda);
+        padding: 16px 24px;
+        text-align: center;
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .footer p {
+        margin: 4px 0;
+      }
+
+      .footer a {
+        color: var(--verde-primario);
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          margin: 0;
+          border-radius: 0;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 16px;
+        }
+
+        .info-area {
+          text-align: left;
+          margin-top: 12px;
+          width: 100%;
+        }
+
+        .info-area .paciente-nome {
+          font-size: 14px;
+        }
+
+        .resumo-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .macros-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .content {
+          padding: 16px 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="logo-area">
+          <h1>🌱 Nutno</h1>
+          <span>Plano Alimentar Personalizado</span>
+        </div>
+        <div class="info-area">
+          <span class="paciente-nome">{{PACIENTE_NOME}}</span>
+          <span class="meta-info">Nutricionista: {{NUTRICIONISTA_NOME}}</span>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- RESUMO PLANO -->
+        <div class="resumo-plano">
+          <div class="resumo-header">
+            <h2>{{NOME_PLANO}}</h2>
+            <span class="badge-status">✓ ENVIADO</span>
+          </div>
+          <div class="resumo-grid">
+            <div class="resumo-card">
+              <label>Meta Calórica</label>
+              <span class="valor">{{CALORIAS_META}}</span>
+              <span class="valor-small">kcal</span>
+            </div>
+            <div class="resumo-card">
+              <label>Distribuição</label>
+              <span class="valor-small"
+                >P {{PROTEINAS_PCT}}% • C {{CARBOIDRATOS_PCT}}% • G
+                {{GORDURAS_PCT}}%</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- METAS DE MACROS -->
+        <h3 class="section-title">Metas Diárias de Macronutrientes</h3>
+        <div class="macros-grid">
+          <div class="macro-card">
+            <div class="macro-icon icon-p">P</div>
+            <div class="macro-label">Proteínas</div>
+            <div class="macro-valor">{{PROTEINAS_GRAMAS}}g</div>
+            <div class="macro-sub">{{PROTEINAS_PCT}}%</div>
+          </div>
+          <div class="macro-card">
+            <div class="macro-icon icon-c">C</div>
+            <div class="macro-label">Carboidratos</div>
+            <div class="macro-valor">{{CARBOIDRATOS_GRAMAS}}g</div>
+            <div class="macro-sub">{{CARBOIDRATOS_PCT}}%</div>
+          </div>
+          <div class="macro-card">
+            <div class="macro-icon icon-g">G</div>
+            <div class="macro-label">Gorduras</div>
+            <div class="macro-valor">{{GORDURAS_GRAMAS}}g</div>
+            <div class="macro-sub">{{GORDURAS_PCT}}%</div>
+          </div>
+        </div>
+
+        <!-- ATTACHMENT -->
+        <div class="attachment-box">
+          <h3>📎 Arquivo Anexado</h3>
+          <p><strong>plano-alimentar.pdf</strong></p>
+          <p>
+            Seu plano detalhado contém todos os alimentos, quantidades, horários
+            recomendados e informações nutricionais completas.
+          </p>
+        </div>
+
+        <!-- INFO -->
+        <div class="info-box">
+          <h3>📋 Seu Plano</h3>
+          <p>
+            Este plano foi desenvolvido especialmente para você, levando em
+            consideração seus objetivos, necessidades nutricionais e
+            preferências.
+          </p>
+          <p>
+            <strong>Como usar:</strong> Imprima ou salve o PDF para consultar
+            durante suas compras e refeições.
+          </p>
+        </div>
+
+        <!-- TIPS -->
+        <div class="tips-list">
+          <h4>💡 Dicas para Aproveitar Melhor</h4>
+          <ul>
+            <li>Prepare suas refeições com antecedência quando possível</li>
+            <li>Mantenha-se hidratado entre as refeições</li>
+            <li>Consulte regularmente com sua nutricionista para ajustes</li>
+            <li>Registre como se sente após as refeições</li>
+            <li>Ajuste as quantidades conforme sua resposta individual</li>
+          </ul>
+        </div>
+
+        <!-- CLOSING -->
+        <div class="closing-text">
+          <p>
+            Estou aqui para ajudá-lo em sua jornada de saúde. Se tiver qualquer
+            dúvida sobre o plano ou precisar de ajustes, não hesite em entrar em
+            contato.
+          </p>
+          <div class="signature">
+            Com saúde,<br />
+            <strong>{{NUTRICIONISTA_NOME}}</strong><br />
+            Plataforma Nutno
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <p>© 2026 Nutno - Plataforma de Nutrição</p>
+        <p><a href="#">Consulte sempre seu nutricionista</a></p>
+        <p>
+          Você recebeu este email porque você é paciente registrado na
+          plataforma Nutno
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

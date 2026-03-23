@@ -40,6 +40,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
     "mysql2": "^3.19.0",
+    "puppeteer": "^24.40.0",
     "resend": "^6.9.3",
     "sequelize": "^6.37.7",
     "uuid": "^13.0.0",
