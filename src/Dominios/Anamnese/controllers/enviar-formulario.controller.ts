@@ -97,7 +97,7 @@ export const enviarFormularioAnamnese = async (
     });
 
     // Construir URL do formulário
-    const urlFormulario = `${process.env.APP_URL || 'http://localhost:5173'}/formulario/${paciente.token_formulario}`;
+    const urlFormulario = `${process.env.APP_URL}/formulario/${paciente.token_formulario}`;
 
     logger.info('Enviando email de formulário de anamnese', {
       requestId,

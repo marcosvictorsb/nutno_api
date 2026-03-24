@@ -29,8 +29,8 @@ export function loadEmailTemplate(
   variables: TemplateVariables
 ): string {
   const templatePath = path.join(
-    __dirname,
-    `../templates/emails/${templateName}.html`
+    process.cwd(),
+    `templates/emails/${templateName}.html`
   );
 
   // Verificar se o arquivo existe
