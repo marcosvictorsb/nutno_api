@@ -5,6 +5,7 @@ import {
   uploadFotoPaciente,
 } from '../../../middlewares/upload';
 import { arquivarPaciente } from '../controllers/arquivar.paciente.controller';
+import { ativarPaciente } from '../controllers/ativar.paciente.controller';
 import { atualizarFotoPaciente } from '../controllers/atualizar.foto.paciente.controller';
 import { atualizarPaciente } from '../controllers/atualizar.paciente.controller';
 import { buscarPaciente } from '../controllers/buscar.paciente.controller';
@@ -30,6 +31,8 @@ pacienteRoutes.patch(
   authMiddleware,
   arquivarPaciente
 );
+pacienteRoutes.patch('/pacientes/:id/ativar', authMiddleware, ativarPaciente);
+
 pacienteRoutes.post(
   '/pacientes/:id/enviar-formulario',
   authMiddleware,
