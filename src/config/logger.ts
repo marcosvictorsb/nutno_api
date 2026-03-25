@@ -1,5 +1,7 @@
-import winston from 'winston';
 import { inspect } from 'util';
+import winston from 'winston';
+import Transport from 'winston-transport';
+import { getDiscordAlertService } from '../services/discord.alert.service';
 import { asyncLocalStorage } from './async.context';
 
 const { combine, timestamp, printf, errors } = winston.format;
@@ -97,6 +99,42 @@ const customFormat = printf(
   }
 );
 
+/**
+ * Custom Transport para enviar erros ao Discord
+ */
+class DiscordTransport extends Transport {
+  log(info: any, callback: Function) {
+    setImmediate(() => {
+      // Apenas enviar erros para Discord
+      if (info.level === 'error') {
+        const context = asyncLocalStorage.getStore();
+        const timestamp = info.timestamp || new Date().toISOString();
+
+        // Extrair informações do meta
+        const { requestId, error, ...meta } = info;
+
+        const discordService = getDiscordAlertService();
+        discordService.enviarAlertaErro({
+          message: info.message,
+          error: info.stack || error || info.message,
+          requestId: context?.requestId,
+          userId: context?.userId,
+          timestamp,
+          method: context?.method,
+          path: context?.path,
+          meta: Object.keys(meta).length > 0 ? meta : undefined,
+        });
+      }
+
+      if (callback) {
+        callback();
+      }
+    });
+  }
+}
+
+const discordTransport = new DiscordTransport();
+
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
   format: combine(
@@ -104,7 +142,7 @@ const logger = winston.createLogger({
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ' }),
     customFormat
   ),
-  transports: [new winston.transports.Console()],
+  transports: [new winston.transports.Console(), discordTransport],
 });
 
 export default logger;

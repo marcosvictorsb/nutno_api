@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
+
+// Carregar variáveis de ambiente ANTES de qualquer outra coisa
+dotenv.config({ quiet: true });
+
 import app from './app';
 import logger from './config/logger';
-
-dotenv.config({ quiet: true });
 
 const PORT = process.env.PORT || 3000;
 
