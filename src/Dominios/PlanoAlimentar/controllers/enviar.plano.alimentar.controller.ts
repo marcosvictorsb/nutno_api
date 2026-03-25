@@ -16,7 +16,7 @@ export const enviarPlanoAlimentar = async (req: Request, res: Response) => {
   try {
     const id_nutricionista = (req as any).user.id;
     const { id_paciente, planoId } = req.params;
-    const { email } = req.body;
+    const { email, mensagem } = req.body;
 
     logger.info('Requisição para enviar plano alimentar recebida', {
       id_nutricionista,
@@ -194,6 +194,7 @@ export const enviarPlanoAlimentar = async (req: Request, res: Response) => {
         PROTEINAS_PCT: Math.round(proteinaPercent),
         CARBOIDRATOS_PCT: Math.round(carboidratoPercent),
         GORDURAS_PCT: Math.round(gorduraPercent),
+        MENSAGEM_NUTRICIONISTA: mensagem || '',
       },
       [
         {
