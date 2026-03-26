@@ -157,8 +157,16 @@ async function installDependencies(): Promise<boolean> {
   logStep('ETAPA 3: Instalando Dependências');
 
   try {
-    logInfo('Executando: npm i');
-    execSync('npm i', { stdio: 'inherit' });
+    // Tenta usar npm ci com devDependencies primeiro (mais seguro com package-lock.json)
+    try {
+      logInfo('Tentando: npm ci --include=dev');
+      execSync('npm ci --include=dev', { stdio: 'inherit' });
+    } catch (error) {
+      // Se falhar, usa npm install (para quando não há package-lock.json)
+      logWarning('npm ci falhou, usando npm install com devDependencies...');
+      execSync('npm install --omit=optional', { stdio: 'inherit' });
+    }
+
     logSuccess('Dependências instaladas com sucesso');
     return true;
   } catch (error) {
