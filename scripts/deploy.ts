@@ -183,6 +183,21 @@ async function runMigrations(): Promise<boolean> {
   }
 }
 
+async function reloadPm2(): Promise<boolean> {
+  logStep('ETAPA 5: Reloadando aplicação com PM2');
+
+  try {
+    logInfo('Executando: pm2 reload nutno');
+    execSync('pm2 reload nutno', { stdio: 'inherit' });
+    logSuccess('Aplicação reloadada com sucesso');
+    return true;
+  } catch (error) {
+    logError('Erro ao reloadar aplicação com PM2');
+    console.error(error);
+    return false;
+  }
+}
+
 async function main() {
   log('\n🚀 Iniciando processo de deploy...\n', colors.bright);
 
@@ -214,9 +229,16 @@ async function main() {
     process.exit(1);
   }
 
+  // Etapa 5: Reload PM2
+  const pm2Success = await reloadPm2();
+  if (!pm2Success) {
+    logError('\n❌ Deploy abortado: Erro ao reloadar aplicação\n');
+    process.exit(1);
+  }
+
   // Sucesso
   logStep('✅ DEPLOY REALIZADO COM SUCESSO!');
-  logSuccess('Projeto pronto para ser iniciado com: npm start');
+  logSuccess('Aplicação atualizada e reloadada com PM2');
   log('\n');
 }
 
