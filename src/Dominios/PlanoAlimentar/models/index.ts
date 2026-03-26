@@ -1,9 +1,20 @@
+import Alimento from '../../Alimentos/models/Alimento';
+import Paciente from '../../Pacientes/model/paciente.model';
+import ItemRefeicao from './ItemRefeicao';
 import PlanoAlimentar from './PlanoAlimentar';
 import Refeicao from './Refeicao';
-import ItemRefeicao from './ItemRefeicao';
-import Alimento from '../../Alimentos/models/Alimento';
 
 // Associações PlanoAlimentar
+PlanoAlimentar.belongsTo(Paciente, {
+  foreignKey: 'id_paciente',
+  as: 'paciente',
+});
+
+Paciente.hasMany(PlanoAlimentar, {
+  foreignKey: 'id_paciente',
+  as: 'planos_alimentares',
+});
+
 PlanoAlimentar.hasMany(Refeicao, {
   foreignKey: 'plano_alimentar_id',
   as: 'refeicoes',
@@ -36,4 +47,4 @@ Alimento.hasMany(ItemRefeicao, {
   as: 'itens_refeicao',
 });
 
-export { PlanoAlimentar, Refeicao, ItemRefeicao };
+export { ItemRefeicao, PlanoAlimentar, Refeicao };

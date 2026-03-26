@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
+import type Paciente from '../../Pacientes/model/paciente.model';
 import type Refeicao from './Refeicao';
 
 type StatusPlano = 'rascunho' | 'enviado' | 'ativo' | 'arquivado';
@@ -23,6 +24,7 @@ class PlanoAlimentar extends Model {
   public deletado_em?: Date;
 
   // Associações
+  public paciente?: Paciente;
   public refeicoes?: Refeicao[];
 }
 

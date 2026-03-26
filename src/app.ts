@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
 import getCorsOptions from './config/cors';
+import {
+  adesaoAuthRoutes,
+  adesaoPublicRoutes,
+} from './Dominios/Adesao/routes/adesao.routes';
 import alimentosRoutes from './Dominios/Alimentos/routes/alimentos.routes';
 import anamneseRoutes from './Dominios/Anamnese/routes/anamnese.routes';
 import formularioPublicoRoutes from './Dominios/Anamnese/routes/formulario.publico.routes';
@@ -16,6 +20,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { requestIdMiddleware } from './middlewares/requestId';
 
 // Importar modelos para inicializar associações
+import './Dominios/Adesao/models';
 import './Dominios/Alimentos/models';
 import './Dominios/Nutricionista/models';
 import './Dominios/PlanoAlimentar/models';
@@ -36,13 +41,15 @@ app.use(requestIdMiddleware);
 // Rotas públicas PRIMEIRO (sem middleware de autenticação)
 app.use('/', leadRoutes);
 app.use('/api/', formularioPublicoRoutes);
-app.use('/api/', planosRoutes); // Inclui rotas públicas (/planos/visualizar/:token)
+app.use('/api/', adesaoPublicRoutes); // Rotas públicas de adesão
 app.use('/api/auth', autentificacaoRoutes);
 
 // Rotas autenticadas DEPOIS
 app.use('/api/', pacienteRoutes);
 app.use('/api/', anamneseRoutes);
 app.use('/api/', medidasRoutes);
+app.use('/api/', adesaoAuthRoutes); // Rotas autenticadas de adesão;
+app.use('/api/', planosRoutes);
 app.use('/api/alimentos', alimentosRoutes);
 app.use('/api/nutricionistas', nutricionistaRoutes);
 
