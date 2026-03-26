@@ -153,8 +153,23 @@ async function validateEnv(requiredVars: Set<string>): Promise<boolean> {
   return true;
 }
 
+async function installDependencies(): Promise<boolean> {
+  logStep('ETAPA 3: Instalando Dependências');
+
+  try {
+    logInfo('Executando: npm i');
+    execSync('npm i', { stdio: 'inherit' });
+    logSuccess('Dependências instaladas com sucesso');
+    return true;
+  } catch (error) {
+    logError('Erro ao instalar dependências');
+    console.error(error);
+    return false;
+  }
+}
+
 async function buildProject(): Promise<boolean> {
-  logStep('ETAPA 3: Compilando TypeScript');
+  logStep('ETAPA 4: Compilando TypeScript');
 
   try {
     logInfo('Executando: npm run build');
@@ -169,7 +184,7 @@ async function buildProject(): Promise<boolean> {
 }
 
 async function runMigrations(): Promise<boolean> {
-  logStep('ETAPA 4: Executando Migrations');
+  logStep('ETAPA 5: Executando Migrations');
 
   try {
     logInfo('Executando: npm run migrate');
@@ -184,7 +199,7 @@ async function runMigrations(): Promise<boolean> {
 }
 
 async function reloadPm2(): Promise<boolean> {
-  logStep('ETAPA 5: Reloadando aplicação com PM2');
+  logStep('ETAPA 6: Reloadando aplicação com PM2');
 
   try {
     logInfo('Executando: pm2 reload nutno');
@@ -215,21 +230,28 @@ async function main() {
     process.exit(1);
   }
 
-  // Etapa 3: Build
+  // Etapa 3: Instalar dependências
+  const depsSuccess = await installDependencies();
+  if (!depsSuccess) {
+    logError('\n❌ Deploy abortado: Erro ao instalar dependências\n');
+    process.exit(1);
+  }
+
+  // Etapa 4: Build
   const buildSuccess = await buildProject();
   if (!buildSuccess) {
     logError('\n❌ Deploy abortado: Erro na compilação\n');
     process.exit(1);
   }
 
-  // Etapa 4: Migrations
+  // Etapa 5: Migrations
   const migrationsSuccess = await runMigrations();
   if (!migrationsSuccess) {
     logError('\n❌ Deploy abortado: Erro nas migrations\n');
     process.exit(1);
   }
 
-  // Etapa 5: Reload PM2
+  // Etapa 6: Reload PM2
   const pm2Success = await reloadPm2();
   if (!pm2Success) {
     logError('\n❌ Deploy abortado: Erro ao reloadar aplicação\n');
