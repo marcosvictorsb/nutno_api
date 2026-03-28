@@ -1,7 +1,8 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../../../infra/database/model/sequelize.config';
-import type PlanoAlimentar from './PlanoAlimentar';
+import type Adesao from '../../Adesao/models/Adesao';
 import type ItemRefeicao from './ItemRefeicao';
+import type PlanoAlimentar from './PlanoAlimentar';
 
 type NomeRefeicao =
   | 'Café da manhã'
@@ -26,6 +27,7 @@ class Refeicao extends Model {
   // Associações
   public plano_alimentar?: PlanoAlimentar;
   public itens?: ItemRefeicao[];
+  public adesoes?: Adesao[];
 }
 
 Refeicao.init(
