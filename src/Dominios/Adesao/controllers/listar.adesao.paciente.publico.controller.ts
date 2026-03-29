@@ -54,7 +54,17 @@ export const listarAdesaoPacientePublico = async (
     const dataAtual = new Date();
     const opcoesDia: Intl.DateTimeFormatOptions = { weekday: 'long' };
     const diaSemanaNome = dataAtual.toLocaleDateString('pt-BR', opcoesDia);
-    const dataAtualFormatada = dataAtual.toISOString().split('T')[0];
+
+    // Formatar data com timezone de Brasília (-3)
+    const formatter = new Intl.DateTimeFormat('pt-BR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'America/Sao_Paulo',
+    });
+    const [dia, mes, ano] = formatter.format(dataAtual).split('/');
+    const dataAtualFormatada = `${ano}-${mes}-${dia}`;
+
     const dataFiltro = data || dataAtualFormatada;
     logger.info('Data atual formatada', {
       dataAtualFormatada,
