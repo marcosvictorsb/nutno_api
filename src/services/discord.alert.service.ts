@@ -14,10 +14,12 @@ export interface DiscordErrorAlert {
 
 class DiscordAlertService {
   private webhookUrl: string;
+  private webhookSuporteUrl: string;
   private isProduction: boolean;
 
   constructor() {
     this.webhookUrl = process.env.DISCORD_WEBHOOK_URL || '';
+    this.webhookSuporteUrl = process.env.DISCORD_WEBHOOK_SUPORTE_URL || '';
     this.isProduction = process.env.NODE_ENV === 'production';
   }
 
@@ -52,7 +54,117 @@ class DiscordAlertService {
   }
 
   /**
-   * Constrói um embed formatado para o Discord
+   * Envia alerta de novo ticket de suporte para o Discord
+   */
+  async enviarAlertaSuporte(dados: {
+    idTicket: number;
+    nutricionistaId: number;
+    nutricionistaNome: string;
+    assunto: string;
+    mensagem: string;
+    email: string;
+  }): Promise<void> {
+    if (!this.webhookSuporteUrl) {
+      logger.warn('Discord webhook URL de suporte não configurada');
+      return;
+    }
+
+    try {
+      const embed = this.construirEmbedSuporte(dados);
+
+      await axios.post(this.webhookSuporteUrl, {
+        content: '🎫 Novo Ticket de Suporte Criado!',
+        embeds: [embed],
+      });
+
+      logger.info('Alerta de suporte enviado para Discord', {
+        ticketId: dados.idTicket,
+      });
+    } catch (erro: any) {
+      logger.warn('Erro ao enviar alerta de suporte para Discord', {
+        erro: erro.message,
+        status: erro.response?.status,
+      });
+    }
+  }
+
+  /**
+   * Constrói um embed formatado para alerta de suporte
+   */
+  private construirEmbedSuporte(dados: {
+    idTicket: number;
+    nutricionistaId: number;
+    nutricionistaNome: string;
+    assunto: string;
+    mensagem: string;
+    email: string;
+  }): object {
+    const {
+      idTicket,
+      nutricionistaId,
+      nutricionistaNome,
+      assunto,
+      mensagem,
+      email,
+    } = dados;
+
+    const assuntoEmoji: Record<string, string> = {
+      registro: '📝',
+      inscricao: '📋',
+      bug: '🐛',
+      duvida: '❓',
+      sugestao: '💡',
+      outro: '📌',
+    };
+
+    const emoji = assuntoEmoji[assunto] || '📝';
+
+    // Truncar mensagem se muito longa
+    const mensagemTruncada =
+      mensagem.length > 300 ? mensagem.substring(0, 297) + '...' : mensagem;
+
+    const fields = [
+      {
+        name: '🎫 ID do Ticket',
+        value: `\`#${idTicket}\``,
+        inline: true,
+      },
+      {
+        name: '👤 Nutricionista',
+        value: `${nutricionistaNome} (ID: ${nutricionistaId})`,
+        inline: true,
+      },
+      {
+        name: `${emoji} Assunto`,
+        value: `\`${assunto}\``,
+        inline: true,
+      },
+      {
+        name: '📧 Email',
+        value: `\`${email}\``,
+        inline: true,
+      },
+      {
+        name: '📝 Mensagem',
+        value: `\`\`\`${mensagemTruncada}\`\`\``,
+        inline: false,
+      },
+    ];
+
+    return {
+      title: `${emoji} Novo Ticket: ${assunto}`,
+      description: `Ticket #${idTicket} foi criado`,
+      color: 0x0099ff, // Azul
+      fields,
+      footer: {
+        text: `Nutno API | ${new Date().toLocaleString('pt-BR')}`,
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Constrói um embed formatado para erro
    */
   private construirEmbed(dados: DiscordErrorAlert): object {
     const { message, error, requestId, userId, timestamp, method, path, meta } =

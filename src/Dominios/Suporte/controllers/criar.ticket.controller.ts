@@ -70,6 +70,30 @@ export const criarTicket = async (
       nutricionistaId,
     });
 
+    // Enviar alerta para Discord (não aguardar, executar em background)
+    try {
+      const discordService =
+        await import('../../../services/discord.alert.service');
+      const service = discordService.default;
+
+      service.enviarAlertaSuporte({
+        idTicket: novoTicket.id,
+        nutricionistaId,
+        nutricionistaNome: req.user?.nome || 'Desconhecido',
+        assunto,
+        mensagem,
+        email,
+      });
+    } catch (discordError) {
+      logger.warn('Erro ao enviar alerta para Discord', {
+        error:
+          discordError instanceof Error
+            ? discordError.message
+            : 'Erro desconhecido',
+      });
+      // Não quebrar a resposta por erro de Discord
+    }
+
     return res.status(201).json({
       success: true,
       message: 'Ticket criado com sucesso',
