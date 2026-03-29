@@ -178,6 +178,16 @@ export const enviarPlanoAlimentar = async (req: Request, res: Response) => {
       gordura_gramas: gorduraGramas,
     });
 
+    // Construir URL pública do plano baseado no APP_URL do .env
+    const baseUrl = process.env.APP_URL || 'http://localhost:5173';
+    const planoLink = `${baseUrl}/paciente/plano/${plano.token_visualizacao}`;
+
+    logger.info('Link público do plano gerado', {
+      id_plano: planoId,
+      plano_link: planoLink,
+      app_url: baseUrl,
+    });
+
     // Enviar email com PDF anexado
     await sendEmail(
       email,
@@ -195,6 +205,7 @@ export const enviarPlanoAlimentar = async (req: Request, res: Response) => {
         CARBOIDRATOS_PCT: Math.round(carboidratoPercent),
         GORDURAS_PCT: Math.round(gorduraPercent),
         MENSAGEM_NUTRICIONISTA: mensagem || '',
+        PLANO_LINK: planoLink,
       },
       [
         {
