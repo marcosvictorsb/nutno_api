@@ -1,5 +1,5 @@
-import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
+import { Sequelize } from 'sequelize';
 import logger from '../../../config/logger';
 
 dotenv.config();
@@ -13,6 +13,7 @@ const sequelize = new Sequelize({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  timezone: process.env.DB_TIMEZONE || '-03:00',
   logging: isProduction
     ? false
     : (sql) => {
