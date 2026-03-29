@@ -20,6 +20,7 @@ import medidasRoutes from './Dominios/Medidas/routes/medidas.routes';
 import nutricionistaRoutes from './Dominios/Nutricionista/routes/nutricionista.routes';
 import pacienteRoutes from './Dominios/Pacientes/routes/paciente.routes';
 import planosRoutes from './Dominios/PlanoAlimentar/routes/plano.alimentar.routes';
+import suporteRoutes from './Dominios/Suporte/routes/suporte.routes';
 import { errorHandler } from './middlewares/errorHandler';
 import { requestIdMiddleware } from './middlewares/requestId';
 
@@ -28,6 +29,7 @@ import './Dominios/Adesao/models';
 import './Dominios/Alimentos/models';
 import './Dominios/Nutricionista/models';
 import './Dominios/PlanoAlimentar/models';
+import './Dominios/Suporte/models';
 
 dotenv.config({ quiet: true }); // ← Carrega .env DEPOIS
 
@@ -56,6 +58,7 @@ app.use('/api/', adesaoAuthRoutes); // Rotas autenticadas de adesão;
 app.use('/api/', planosRoutes);
 app.use('/api/alimentos', alimentosRoutes);
 app.use('/api/nutricionistas', nutricionistaRoutes);
+app.use('/api/suporte/tickets', suporteRoutes);
 
 // Middleware de tratamento de erros (deve ser o último)
 app.use(errorHandler);
