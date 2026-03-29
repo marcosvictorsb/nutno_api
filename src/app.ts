@@ -2,6 +2,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express from 'express';
 import path from 'path';
+
+// Configurar timezone do Node.js
+process.env.TZ = 'America/Sao_Paulo';
+
 import getCorsOptions from './config/cors';
 import {
   adesaoAuthRoutes,
