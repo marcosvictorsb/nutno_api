@@ -295,6 +295,100 @@
             color: #3b82f6;
         }
         
+        /* Adherence Box */
+        .box-adherence {
+            background-color: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .box-adherence h3 {
+            color: #14532d;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            padding: 0;
+        }
+        
+        .box-adherence p {
+            color: #374151;
+            font-size: 13px;
+            margin: 8px 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .adherence-list {
+            margin: 12px 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .adherence-item {
+            margin: 10px 0;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #374151;
+        }
+        
+        .adherence-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-right: 8px;
+            border: 1px solid;
+        }
+        
+        .badge-seguiu {
+            background-color: #dcfce7;
+            color: #14532d;
+            border-color: #86efac;
+        }
+        
+        .badge-parcial {
+            background-color: #fef3c7;
+            color: #b45309;
+            border-color: #fde047;
+        }
+        
+        .badge-pulou {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+        
+        .adherence-description {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .box-adherence .cta-text {
+            font-weight: 600;
+            color: #14532d;
+            margin: 12px 0;
+        }
+        
+        .adherence-cta-btn {
+            background-color: #16a34a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 12px;
+        }
+        
+        .adherence-cta-btn:hover {
+            background-color: #15803d;
+            text-decoration: none;
+        }
+        
         /* Closing and signature */
         .closing-text {
             font-size: 13px;
@@ -427,6 +521,31 @@
                                     <li>Registre como se sente após as refeições</li>
                                     <li>Ajuste as quantidades conforme sua resposta individual</li>
                                 </ul>
+                            </div>
+                            
+                            <!-- PUBLIC ACCESS - ADESÃO -->
+                            <div class="box-adherence">
+                                <h3>📱 Acompanhe Sua Adesão Online</h3>
+                                <p>Você pode registrar e acompanhar como está seguindo seu plano através de nossa plataforma exclusiva para pacientes.</p>
+                                
+                                <ul class="adherence-list">
+                                    <li class="adherence-item">
+                                        <strong>Seguiu:</strong> <span class="adherence-badge badge-seguiu">✓ Seguiu</span> 
+                                        <span class="adherence-description">Você seguiu perfeitamente o plano neste dia</span>
+                                    </li>
+                                    <li class="adherence-item">
+                                        <strong>Parcial:</strong> <span class="adherence-badge badge-parcial">◐ Parcial</span> 
+                                        <span class="adherence-description">Você seguiu em parte (alguns alimentos foram ajustados)</span>
+                                    </li>
+                                    <li class="adherence-item">
+                                        <strong>Pulou:</strong> <span class="adherence-badge badge-pulou">✗ Pulou</span> 
+                                        <span class="adherence-description">Você não realizou a refeição ou fez mudanças significativas</span>
+                                    </li>
+                                </ul>
+                                
+                                <p class="cta-text">Acompanhe cada refeição do seu dia, registre sua adesão e aumente suas chances de sucesso! 🎯</p>
+                                
+                                <a href="{{PLANO_LINK}}" class="adherence-cta-btn">Acessar Meu Plano →</a>
                             </div>
                             
                             <!-- CLOSING -->
