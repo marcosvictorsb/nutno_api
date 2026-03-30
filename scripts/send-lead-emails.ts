@@ -74,7 +74,7 @@ async function sendLeadEmails(): Promise<void> {
         // Enviar email
         await sendEmail(
           lead.email,
-          lead.name || 'Lead',
+          lead.name || 'Olá Nutricionista',
           'lead-abertura-vagas',
           {
             leadName: lead.name || 'Você',
