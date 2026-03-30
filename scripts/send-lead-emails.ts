@@ -63,7 +63,7 @@ async function sendLeadEmails(): Promise<void> {
         }
 
         // Construir link exclusivo
-        const exclusiveLink = `https://www.nutno.com.br/criar-conta-lead?${lead.email}`;
+        const exclusiveLink = `https://www.nutno.com.br/criar-conta-lead?email=${lead.email}`;
 
         logger.info('[SCRIPT - LEADS] Enviando email', {
           leadId: lead.id,
