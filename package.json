@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/marcosvictorsb/nutno_api#readme",
   "dependencies": {
+    "@opensearch-project/opensearch": "^3.5.1",
     "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
