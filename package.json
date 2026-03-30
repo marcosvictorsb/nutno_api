@@ -20,6 +20,7 @@
     "seed:tbca": "ts-node scripts/seed-tbca.ts",
     "seed:dedup": "ts-node scripts/deduplicar-alimentos.ts",
     "seed:alimentos": "npm run seed:taco && npm run seed:tbca && npm run seed:dedup",
+    "send:lead-emails": "ts-node scripts/send-lead-emails.ts",
     "deploy": "ts-node scripts/deploy.ts"
   },
   "repository": {
@@ -44,6 +45,7 @@
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
     "mysql2": "^3.19.0",
+    "node-cron": "^4.2.1",
     "puppeteer": "^24.40.0",
     "resend": "^6.9.3",
     "sequelize": "^6.37.7",
@@ -59,6 +61,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/multer": "^2.1.0",
     "@types/node": "^25.3.5",
+    "@types/node-cron": "^3.0.11",
     "@typescript-eslint/eslint-plugin": "^8.56.1",
     "@typescript-eslint/parser": "^8.56.1",
     "eslint": "^9.39.3",

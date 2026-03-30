@@ -5,6 +5,7 @@ class Lead extends Model {
   public id!: number;
   public name!: string | null;
   public email!: string | null;
+  public enviada!: boolean;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -23,6 +24,11 @@ Lead.init(
     email: {
       type: DataTypes.STRING(255),
       allowNull: true,
+    },
+    enviada: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,
