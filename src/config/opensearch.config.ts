@@ -107,20 +107,65 @@ export class OpenSearchTransport extends Transport {
   }
 
   /**
+   * Serializa valores para strings JSON quando necessário
+   */
+  private serializeValue(value: any): any {
+    if (value === null || value === undefined) {
+      return value;
+    }
+
+    // Se é um objeto simples (não array, não Date, não Error), converte para JSON
+    if (
+      typeof value === 'object' &&
+      !Array.isArray(value) &&
+      !(value instanceof Date) &&
+      !(value instanceof Error)
+    ) {
+      return JSON.stringify(value);
+    }
+
+    // Se é um array de objetos, converte cada um para JSON
+    if (Array.isArray(value)) {
+      return JSON.stringify(value);
+    }
+
+    return value;
+  }
+
+  /**
    * Formata o log para enviar ao OpenSearch
    */
   private formatLog(info: any): Record<string, any> {
+    // Separa os campos conhecidos e serializa o resto
+    const {
+      timestamp,
+      level,
+      message,
+      stack,
+      requestId,
+      userId,
+      method,
+      path,
+      ...rest
+    } = info;
+
+    // Serializa valores do resto para garantir que objetos virem strings JSON
+    const serializedRest: Record<string, any> = {};
+    for (const [key, value] of Object.entries(rest)) {
+      serializedRest[key] = this.serializeValue(value);
+    }
+
     return {
-      '@timestamp': new Date(info.timestamp || Date.now()).toISOString(),
-      level: info.level,
-      message: info.message,
-      stack: info.stack || null,
+      '@timestamp': new Date(timestamp || Date.now()).toISOString(),
+      level,
+      message,
+      stack: stack || null,
       meta: {
-        requestId: info.requestId || null,
-        userId: info.userId || null,
-        method: info.method || null,
-        path: info.path || null,
-        ...info,
+        requestId: requestId || null,
+        userId: userId || null,
+        method: method || null,
+        path: path || null,
+        ...serializedRest,
       },
       environment: process.env.NODE_ENV || 'development',
       service: 'nutno-api',
