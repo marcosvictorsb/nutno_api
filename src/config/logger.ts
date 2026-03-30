@@ -3,6 +3,7 @@ import winston from 'winston';
 import Transport from 'winston-transport';
 import { getDiscordAlertService } from '../services/discord.alert.service';
 import { asyncLocalStorage } from './async.context';
+import { createOpenSearchTransport } from './opensearch.config';
 
 const { combine, timestamp, printf, errors } = winston.format;
 
@@ -135,6 +136,8 @@ class DiscordTransport extends Transport {
 
 const discordTransport = new DiscordTransport();
 
+const openSearchTransport = createOpenSearchTransport();
+
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
   format: combine(
@@ -142,7 +145,11 @@ const logger = winston.createLogger({
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ' }),
     customFormat
   ),
-  transports: [new winston.transports.Console(), discordTransport],
+  transports: [
+    new winston.transports.Console(),
+    discordTransport,
+    ...(openSearchTransport ? [openSearchTransport] : []),
+  ],
 });
 
 export default logger;

@@ -1,0 +1,199 @@
+import { Client } from '@opensearch-project/opensearch';
+import Transport from 'winston-transport';
+
+/**
+ * Configuração do OpenSearch
+ */
+export interface OpenSearchConfig {
+  enabled: boolean;
+  url: string;
+  username: string;
+  password: string;
+  index: string;
+  sslVerify: boolean;
+}
+
+/**
+ * Valida e carrega as configurações do OpenSearch a partir das variáveis de ambiente
+ */
+export function loadOpenSearchConfig(): OpenSearchConfig {
+  return {
+    enabled: process.env.OPENSEARCH_ENABLED === 'true',
+    url: process.env.OPENSEARCH_URL || '',
+    username: process.env.OPENSEARCH_USERNAME || '',
+    password: process.env.OPENSEARCH_PASSWORD || '',
+    index: process.env.OPENSEARCH_INDEX || 'nutno-logs',
+    sslVerify: process.env.OPENSEARCH_SSL_VERIFY !== 'false',
+  };
+}
+
+/**
+ * Custom Transport para enviar logs ao OpenSearch
+ */
+export class OpenSearchTransport extends Transport {
+  private client: Client | null = null;
+  private config: OpenSearchConfig;
+  private queue: any[] = [];
+  private isConnected = false;
+
+  constructor(config: OpenSearchConfig) {
+    super();
+    this.config = config;
+
+    if (config.enabled && config.url) {
+      this.initializeClient();
+    }
+  }
+
+  /**
+   * Inicializa o cliente do OpenSearch
+   */
+  private initializeClient(): void {
+    try {
+      const clientConfig: any = {
+        node: this.config.url,
+        ssl: {
+          rejectUnauthorized: this.config.sslVerify,
+        },
+      };
+
+      if (this.config.username && this.config.password) {
+        clientConfig.auth = {
+          username: this.config.username,
+          password: this.config.password,
+        };
+      }
+
+      this.client = new Client(clientConfig);
+      this.isConnected = true;
+
+      console.log('[OpenSearch] Transport inicializado com sucesso', {
+        opensearchUrl: this.config.url,
+        opensearchIndex: this.config.index,
+      });
+    } catch (error: Error | any) {
+      console.error('[OpenSearch] Erro ao inicializar OpenSearch Transport', {
+        error: error.message,
+      });
+      this.isConnected = false;
+    }
+  }
+
+  /**
+   * Implementa o método log do Transport do Winston
+   */
+  log(info: any, callback: Function): void {
+    if (!this.config.enabled || !this.client) {
+      if (callback) {
+        callback();
+      }
+      return;
+    }
+
+    setImmediate(async () => {
+      try {
+        const document = this.formatLog(info);
+        await this.sendToOpenSearch(document);
+      } catch (error: Error | any) {
+        console.error('[OpenSearch] Erro ao enviar log para OpenSearch', {
+          error: error.message,
+        });
+      }
+
+      if (callback) {
+        callback();
+      }
+    });
+  }
+
+  /**
+   * Formata o log para enviar ao OpenSearch
+   */
+  private formatLog(info: any): Record<string, any> {
+    return {
+      '@timestamp': new Date(info.timestamp || Date.now()).toISOString(),
+      level: info.level,
+      message: info.message,
+      stack: info.stack || null,
+      meta: {
+        requestId: info.requestId || null,
+        userId: info.userId || null,
+        method: info.method || null,
+        path: info.path || null,
+        ...info,
+      },
+      environment: process.env.NODE_ENV || 'development',
+      service: 'nutno-api',
+    };
+  }
+
+  /**
+   * Envia o documento para o OpenSearch
+   */
+  private async sendToOpenSearch(document: Record<string, any>): Promise<void> {
+    if (!this.client) {
+      throw new Error('Cliente OpenSearch não inicializado');
+    }
+
+    try {
+      const indexName = `${this.config.index}-${new Date().toISOString().split('T')[0]}`;
+
+      await this.client.index({
+        index: indexName,
+        body: document,
+      });
+    } catch (error: Error | any) {
+      // Tentar reconectar se a conexão foi perdida
+      if (
+        error.message?.includes('Connection refused') ||
+        error.message?.includes('ECONNREFUSED')
+      ) {
+        console.warn('[OpenSearch] Conexão perdida, tentando reconectar', {
+          error: error.message,
+        });
+        this.isConnected = false;
+        this.initializeClient();
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Retorna informações sobre o status da conexão
+   */
+  getConnectionStatus(): {
+    enabled: boolean;
+    connected: boolean;
+    url?: string;
+    index?: string;
+  } {
+    return {
+      enabled: this.config.enabled,
+      connected: this.isConnected && !!this.client,
+      url: this.config.enabled ? this.config.url : undefined,
+      index: this.config.enabled ? this.config.index : undefined,
+    };
+  }
+}
+
+/**
+ * Factory para criar uma instância do OpenSearch Transport
+ */
+export function createOpenSearchTransport(): OpenSearchTransport | null {
+  const config = loadOpenSearchConfig();
+
+  if (!config.enabled) {
+    console.log('[OpenSearch] OpenSearch está desabilitado');
+    return null;
+  }
+
+  if (!config.url) {
+    console.warn(
+      '[OpenSearch] OPENSEARCH_URL não configurada, OpenSearch será desabilitado'
+    );
+    return null;
+  }
+
+  return new OpenSearchTransport(config);
+}
