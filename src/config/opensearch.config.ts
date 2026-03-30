@@ -114,6 +114,19 @@ export class OpenSearchTransport extends Transport {
       return value;
     }
 
+    // Se é uma string, verifica se já é JSON válido
+    if (typeof value === 'string') {
+      // Se já parece ser JSON, retorna como está
+      if (
+        (value.startsWith('{') && value.endsWith('}')) ||
+        (value.startsWith('[') && value.endsWith(']'))
+      ) {
+        return value;
+      }
+      // Caso contrário, retorna a string como está
+      return value;
+    }
+
     // Se é um objeto simples (não array, não Date, não Error), converte para JSON
     if (
       typeof value === 'object' &&
@@ -124,7 +137,7 @@ export class OpenSearchTransport extends Transport {
       return JSON.stringify(value);
     }
 
-    // Se é um array de objetos, converte cada um para JSON
+    // Se é um array, converte para JSON
     if (Array.isArray(value)) {
       return JSON.stringify(value);
     }
@@ -149,8 +162,9 @@ export class OpenSearchTransport extends Transport {
       ...rest
     } = info;
 
-    // Serializa valores do resto para garantir que objetos virem strings JSON
+    // Serializa todos os valores para strings JSON quando apropriado
     const serializedRest: Record<string, any> = {};
+
     for (const [key, value] of Object.entries(rest)) {
       serializedRest[key] = this.serializeValue(value);
     }

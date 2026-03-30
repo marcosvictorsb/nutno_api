@@ -4,7 +4,6 @@ import logger from '../../../config/logger';
 import { AuthenticatedRequest } from '../../../middlewares/auth';
 import { ApiResponse } from '../../../types/ApiResponse';
 import Paciente from '../model/paciente.model';
-import { log } from 'console';
 
 export const listarPacientes = async (
   req: AuthenticatedRequest,
@@ -58,7 +57,7 @@ export const listarPacientes = async (
 
     logger.info('Listando pacientes com filtros', {
       id_nutricionista,
-      filtros: where,
+      filtros: JSON.stringify(where),
       pagina: page,
       limite: limit,
     });
