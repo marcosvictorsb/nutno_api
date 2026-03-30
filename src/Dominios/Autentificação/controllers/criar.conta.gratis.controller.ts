@@ -1,14 +1,16 @@
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 import logger from '../../../config/logger';
+import { getDiscordAlertService } from '../../../services/discord.alert.service';
+import { sendEmail } from '../../../services/email.service';
+import { hashPassword } from '../../../utils/password';
+import Inscricao from '../../Inscricoes/model/inscricao.model';
 import Nutricionista from '../../Nutricionista/models/nutricionista.model';
 import Plano from '../../Planos/model/plano.model';
-import Inscricao from '../../Inscricoes/model/inscricao.model';
-import { hashPassword } from '../../../utils/password';
 
 export const criarContaGratis = async (req: Request, res: Response) => {
   try {
-    const { email, senha, nome } = req.body;
-    logger.info('Criando conta grátis', { email });
+    const { email, senha, nome, isLead } = req.body;
+    logger.info('Criando conta grátis', { email, isLead });
 
     if (!email || !senha || !nome) {
       logger.warn('Dados incompletos para criação de conta', { email });
@@ -72,6 +74,47 @@ export const criarContaGratis = async (req: Request, res: Response) => {
     });
 
     logger.info('Inscrição criada com sucesso', { email });
+
+    // Enviar email de sucesso
+    try {
+      const loginUrl = `${process.env.APP_URL}/auth/login`;
+      await sendEmail(
+        email,
+        'Bem-vindo à Nutno! Conta criada com sucesso',
+        'sucesso-cadastro-nutricionista',
+        {
+          nome,
+          loginUrl,
+          appUrl: process.env.APP_URL || '',
+        }
+      );
+      logger.info('Email de sucesso enviado', { email });
+    } catch (emailError: Error | any) {
+      logger.error('Erro ao enviar email de sucesso', {
+        email,
+        error: emailError.message,
+      });
+      // Não bloqueia a criação da conta, apenas registra o erro
+    }
+
+    // Enviar alerta para Discord
+    try {
+      const discordService = getDiscordAlertService();
+      await discordService.enviarAlertaCadastroNutricionista({
+        usuarioId: nutricionistaCriado.id,
+        usuarioNome: nome,
+        usuarioEmail: email,
+        plano: planoGratuito.nome_plano,
+        dataVencimento,
+      });
+      logger.info('Alerta de cadastro enviado para Discord', { email });
+    } catch (discordError: Error | any) {
+      logger.error('Erro ao enviar alerta para Discord', {
+        email,
+        error: discordError.message,
+      });
+      // Não bloqueia a criação da conta, apenas registra o erro
+    }
 
     return res.status(201).json({
       success: true,

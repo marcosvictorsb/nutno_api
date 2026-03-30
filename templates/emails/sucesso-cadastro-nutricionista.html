@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background-color: #f6f8f7;
+        color: #1f2937;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      }
+      .header {
+        background: linear-gradient(135deg, #16a249 0%, #0d7a35 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .greeting {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .content p {
+        color: #6b7280;
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .success-box {
+        background-color: #f0fdf4;
+        border-left: 4px solid #16a249;
+        padding: 20px;
+        margin: 24px 0;
+        border-radius: 8px;
+      }
+      .success-box h3 {
+        color: #16a249;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .success-box p {
+        color: #4b5563;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .success-box p:last-child {
+        margin-bottom: 0;
+      }
+      .button-wrapper {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .button {
+        display: inline-block;
+        background: linear-gradient(135deg, #16a249 0%, #0d7a35 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 40px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(22, 162, 73, 0.3);
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 162, 73, 0.4);
+      }
+      .features {
+        margin: 28px 0;
+      }
+      .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .feature-item:last-child {
+        border-bottom: none;
+      }
+      .feature-icon {
+        color: #16a249;
+        font-size: 20px;
+        margin-right: 12px;
+        flex-shrink: 0;
+      }
+      .feature-text {
+        flex: 1;
+      }
+      .feature-text strong {
+        color: #1f2937;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .feature-text p {
+        color: #6b7280;
+        font-size: 13px;
+        margin: 0;
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 28px 0;
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 20px 30px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        color: #9ca3af;
+        font-size: 12px;
+        margin: 0;
+      }
+      .footer a {
+        color: #16a249;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">✅</div>
+        <h1>Cadastro Realizado com Sucesso!</h1>
+      </div>
+
+      <div class="content">
+        <p class="greeting">Olá {{nome}},</p>
+
+        <p>
+          É com grande prazer que confirmamos que sua conta foi criada com
+          sucesso na plataforma <strong>Nutno</strong>.
+        </p>
+
+        <div class="success-box">
+          <h3>Bem-vindo à Nutno!</h3>
+          <p>
+            Sua conta está pronta para uso e você já tem acesso ao plano
+            gratuito por 30 dias.
+          </p>
+          <p>
+            Explore todos os recursos e ferramentas disponíveis para gerenciar
+            melhor seus pacientes.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-text">
+              <strong>Gestão de Pacientes</strong>
+              <p>Cadastre e organize informações dos seus pacientes</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">🍎</div>
+            <div class="feature-text">
+              <strong>Planos Alimentares</strong>
+              <p>Crie planos alimentares personalizados</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon">📋</div>
+            <div class="feature-text">
+              <strong>Banco de Alimentos</strong>
+              <p>Acesse nosso completo banco de dados de alimentos</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-wrapper">
+          <a href="{{loginUrl}}" class="button">Acessar Login</a>
+        </div>
+
+        <p>
+          Se você não conseguir acessar a plataforma, clique no link acima ou
+          copie e cole o seguinte endereço em seu navegador:
+        </p>
+
+        <div
+          style="
+            background-color: #f3f4f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 16px 0;
+            word-break: break-all;
+          "
+        >
+          <p style="color: #4b5563; font-size: 12px; margin: 0">{{loginUrl}}</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <p>
+          Se tiver dúvidas ou precisar de suporte, não hesite em entrar em
+          contato conosco. Estamos aqui para ajudar! 💚
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          &copy; 2024 Nutno. Todos os direitos reservados. |
+          <a href="{{appUrl}}">Acessar plataforma</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

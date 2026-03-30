@@ -15,11 +15,13 @@ export interface DiscordErrorAlert {
 class DiscordAlertService {
   private webhookUrl: string;
   private webhookSuporteUrl: string;
+  private webhookAdesaoUrl: string;
   private isProduction: boolean;
 
   constructor() {
     this.webhookUrl = process.env.DISCORD_WEBHOOK_URL || '';
     this.webhookSuporteUrl = process.env.DISCORD_WEBHOOK_SUPORTE_URL || '';
+    this.webhookAdesaoUrl = process.env.DISCORD_WEBHOOK_ADESAO_URL || '';
     this.isProduction = process.env.NODE_ENV === 'production';
   }
 
@@ -82,6 +84,40 @@ class DiscordAlertService {
       });
     } catch (erro: any) {
       logger.warn('Erro ao enviar alerta de suporte para Discord', {
+        erro: erro.message,
+        status: erro.response?.status,
+      });
+    }
+  }
+
+  /**
+   * Envia alerta de novo cadastro de nutricionista para o Discord
+   */
+  async enviarAlertaCadastroNutricionista(dados: {
+    usuarioId: number;
+    usuarioNome: string;
+    usuarioEmail: string;
+    plano: string;
+    dataVencimento: Date;
+  }): Promise<void> {
+    if (!this.webhookAdesaoUrl) {
+      logger.warn('Discord webhook URL de adesão não configurada');
+      return;
+    }
+
+    try {
+      const embed = this.construirEmbedCadastro(dados);
+
+      await axios.post(this.webhookAdesaoUrl, {
+        content: '✅ Novo Cadastro de Nutricionista!',
+        embeds: [embed],
+      });
+
+      logger.info('Alerta de cadastro enviado para Discord', {
+        usuarioId: dados.usuarioId,
+      });
+    } catch (erro: any) {
+      logger.warn('Erro ao enviar alerta de cadastro para Discord', {
         erro: erro.message,
         status: erro.response?.status,
       });
@@ -155,6 +191,61 @@ class DiscordAlertService {
       title: `${emoji} Novo Ticket: ${assunto}`,
       description: `Ticket #${idTicket} foi criado`,
       color: 0x0099ff, // Azul
+      fields,
+      footer: {
+        text: `Nutno API | ${new Date().toLocaleString('pt-BR')}`,
+      },
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * Constrói um embed formatado para alerta de cadastro de nutricionista
+   */
+  private construirEmbedCadastro(dados: {
+    usuarioId: number;
+    usuarioNome: string;
+    usuarioEmail: string;
+    plano: string;
+    dataVencimento: Date;
+  }): object {
+    const { usuarioId, usuarioNome, usuarioEmail, plano, dataVencimento } =
+      dados;
+
+    const dataFormatada = new Date(dataVencimento).toLocaleDateString('pt-BR');
+
+    const fields = [
+      {
+        name: '👤 Nome',
+        value: usuarioNome,
+        inline: true,
+      },
+      {
+        name: '🆔 ID',
+        value: `\`${usuarioId}\``,
+        inline: true,
+      },
+      {
+        name: '📧 Email',
+        value: `\`${usuarioEmail}\``,
+        inline: true,
+      },
+      {
+        name: '💳 Plano',
+        value: plano,
+        inline: true,
+      },
+      {
+        name: '📅 Vencimento',
+        value: `\`${dataFormatada}\``,
+        inline: true,
+      },
+    ];
+
+    return {
+      title: '✅ Novo Cadastro de Nutricionista',
+      description: `${usuarioNome} se cadastrou com sucesso na plataforma`,
+      color: 0x10b981, // Verde
       fields,
       footer: {
         text: `Nutno API | ${new Date().toLocaleString('pt-BR')}`,
