@@ -165,8 +165,25 @@ export class OpenSearchTransport extends Transport {
     // Serializa todos os valores para strings JSON quando apropriado
     const serializedRest: Record<string, any> = {};
 
+    // Campos que devem ser mantidos/convertidos para objetos
+    const objectFields = ['filtros'];
+
     for (const [key, value] of Object.entries(rest)) {
-      serializedRest[key] = this.serializeValue(value);
+      if (objectFields.includes(key)) {
+        // Para campos que devem ser objetos, faz parse se for string JSON
+        if (typeof value === 'string') {
+          try {
+            serializedRest[key] = JSON.parse(value);
+          } catch {
+            // Se não conseguir fazer parse, mantém a string
+            serializedRest[key] = value;
+          }
+        } else {
+          serializedRest[key] = value;
+        }
+      } else {
+        serializedRest[key] = this.serializeValue(value);
+      }
     }
 
     return {
