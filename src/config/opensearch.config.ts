@@ -214,10 +214,21 @@ export class OpenSearchTransport extends Transport {
     try {
       const indexName = `${this.config.index}-${new Date().toISOString().split('T')[0]}`;
 
-      await this.client.index({
+      const response = await this.client.index({
         index: indexName,
         body: document,
       });
+
+      // Log de sucesso para debug
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[OpenSearch] Documento enviado com sucesso', {
+          indexName,
+          documentId: response.body._id,
+          timestamp: document['@timestamp'],
+          level: document.level,
+          message: document.message,
+        });
+      }
     } catch (error: Error | any) {
       // Tentar reconectar se a conexão foi perdida
       if (
@@ -230,6 +241,12 @@ export class OpenSearchTransport extends Transport {
         this.isConnected = false;
         this.initializeClient();
       }
+
+      console.error('[OpenSearch] Erro detalhado ao enviar documento', {
+        error: error.message,
+        statusCode: error.statusCode,
+        body: error.body,
+      });
 
       throw error;
     }
