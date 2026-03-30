@@ -212,7 +212,7 @@ export class OpenSearchTransport extends Transport {
     }
 
     try {
-      const indexName = `${this.config.index}-${new Date().toISOString().split('T')[0]}`;
+      const indexName = this.config.index;
 
       const response = await this.client.index({
         index: indexName,
