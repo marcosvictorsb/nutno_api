@@ -19,6 +19,7 @@ import leadRoutes from './Dominios/Leads/routes/lead.routes';
 import medidasRoutes from './Dominios/Medidas/routes/medidas.routes';
 import nutricionistaRoutes from './Dominios/Nutricionista/routes/nutricionista.routes';
 import pacienteRoutes from './Dominios/Pacientes/routes/paciente.routes';
+import webhookRouter from './Dominios/Pagamentos/routes/webhook.routes';
 import planosRoutes from './Dominios/PlanoAlimentar/routes/plano.alimentar.routes';
 import suporteRoutes from './Dominios/Suporte/routes/suporte.routes';
 import { errorHandler } from './middlewares/errorHandler';
@@ -28,6 +29,7 @@ import { requestIdMiddleware } from './middlewares/requestId';
 import './Dominios/Adesao/models';
 import './Dominios/Alimentos/models';
 import './Dominios/Nutricionista/models';
+import './Dominios/Pagamentos/models';
 import './Dominios/PlanoAlimentar/models';
 import './Dominios/Suporte/models';
 
@@ -49,6 +51,7 @@ app.use('/', leadRoutes);
 app.use('/api/', formularioPublicoRoutes);
 app.use('/api/', adesaoPublicRoutes); // Rotas públicas de adesão
 app.use('/api/auth', autentificacaoRoutes);
+app.use('/api/webhooks', webhookRouter); // Webhooks da Kirvano (público com token)
 
 // Rotas autenticadas DEPOIS
 app.use('/api/', pacienteRoutes);

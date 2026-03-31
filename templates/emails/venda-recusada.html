@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background-color: #f6f8f7;
+        color: #1f2937;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      }
+      .header {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .greeting {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .content p {
+        color: #6b7280;
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .error-box {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        padding: 20px;
+        margin: 24px 0;
+        border-radius: 8px;
+      }
+      .error-box h3 {
+        color: #dc2626;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .error-box p {
+        color: #4b5563;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .error-box p:last-child {
+        margin-bottom: 0;
+      }
+      .button-wrapper {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .button {
+        display: inline-block;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 40px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+      }
+      .reasons-box {
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .reasons-box h4 {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .reasons-box ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .reasons-box li {
+        color: #6b7280;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 28px 0;
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 20px 30px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        color: #9ca3af;
+        font-size: 12px;
+        margin: 0;
+      }
+      .footer a {
+        color: #ef4444;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">❌</div>
+        <h1>Pagamento Recusado</h1>
+      </div>
+
+      <div class="content">
+        <p class="greeting">Olá {{nome}},</p>
+
+        <p>
+          Infelizmente, sua tentativa de pagamento foi recusada. Isto pode
+          ocorrer por diversas razões relacionadas ao seu banco ou forma de
+          pagamento.
+        </p>
+
+        <div class="error-box">
+          <h3>POR QUE FOI RECUSADO?</h3>
+          <p>Motivo: <strong>{{motivo}}</strong></p>
+          <p>
+            Sugerimos que você verifique com seu banco ou tente utilizar outro
+            método de pagamento.
+          </p>
+        </div>
+
+        <div class="reasons-box">
+          <h4>Possíveis Motivos da Recusa:</h4>
+          <ul>
+            <li>Saldo insuficiente na conta</li>
+            <li>Cartão expirado ou bloqueado</li>
+            <li>Dados do cartão incorretos</li>
+            <li>Limite de transação atingido</li>
+            <li>PIX de valor muito alto (verificar limites)</li>
+          </ul>
+        </div>
+
+        <p style="margin-top: 24px">
+          Clique no botão abaixo para tentar fazer um novo pagamento:
+        </p>
+
+        <div class="button-wrapper">
+          <a href="{{urlCheckout}}" class="button">Tentar Novamente</a>
+        </div>
+
+        <div class="divider"></div>
+
+        <p>
+          Ainda tem dúvidas? Entre em contato com nosso suporte. Faremos de tudo
+          para resolver! 💚
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          &copy; 2024 Nutno. Todos os direitos reservados. |
+          <a href="{{appUrl}}">Acessar plataforma</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background-color: #f6f8f7;
+        color: #1f2937;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      }
+      .header {
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .greeting {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .content p {
+        color: #6b7280;
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .alert-box {
+        background-color: #f3e8ff;
+        border-left: 4px solid #7c3aed;
+        padding: 20px;
+        margin: 24px 0;
+        border-radius: 8px;
+      }
+      .alert-box h3 {
+        color: #6d28d9;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .alert-box p {
+        color: #4b5563;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .alert-box p:last-child {
+        margin-bottom: 0;
+      }
+      .impact-box {
+        background-color: #fee2e2;
+        border-left: 4px solid #ef4444;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+      }
+      .impact-box h4 {
+        color: #dc2626;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .impact-box p {
+        color: #4b5563;
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      .button-wrapper {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .button {
+        display: inline-block;
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 40px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+      }
+      .support-info {
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .support-info h4 {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      .support-info p {
+        color: #6b7280;
+        font-size: 13px;
+        margin: 6px 0;
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 28px 0;
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 20px 30px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        color: #9ca3af;
+        font-size: 12px;
+        margin: 0;
+      }
+      .footer a {
+        color: #7c3aed;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">⚠️</div>
+        <h1>Notificação Importante - Chargeback</h1>
+      </div>
+
+      <div class="content">
+        <p class="greeting">Olá {{nome}},</p>
+
+        <p>
+          Recebemos uma notificação de disputa/chargeback relacionada a uma
+          transação de pagamento em nossa plataforma.
+        </p>
+
+        <div class="alert-box">
+          <h3>O QUE SIGNIFICA ISSO?</h3>
+          <p>
+            Um chargeback é uma disputa iniciada com sua instituição financeira
+            sobre uma transação que você realizou. Isto pode ocorrer quando:
+          </p>
+          <ul style="margin-top: 10px; margin-left: 15px">
+            <li style="color: #4b5563; font-size: 13px; margin-bottom: 6px">
+              Você contestou uma transação com seu banco
+            </li>
+            <li style="color: #4b5563; font-size: 13px; margin-bottom: 6px">
+              Houve uma fraude reportada
+            </li>
+            <li style="color: #4b5563; font-size: 13px; margin-bottom: 6px">
+              Houve um erro no processamento
+            </li>
+          </ul>
+        </div>
+
+        <div class="impact-box">
+          <h4>🔒 STATUS DE SUA CONTA</h4>
+          <p>
+            <strong>Sua inscrição foi temporariamente suspensa</strong> enquanto
+            investigamos este chargeback.
+          </p>
+          <p style="margin-top: 10px">
+            Você perderá o acesso aos recursos da plataforma até que a situação
+            seja resolvida.
+          </p>
+        </div>
+
+        <p style="margin-top: 24px">
+          Se este chargeback foi iniciado por engano ou se você tem informações
+          adicionais, entre em contato conosco imediatamente:
+        </p>
+
+        <div class="button-wrapper">
+          <a href="mailto:suporte@nutno.com.br" class="button"
+            >Contatar Suporte</a
+          >
+        </div>
+
+        <div class="support-info">
+          <h4>📞 INFORMAÇÕES PARA CONTACTO</h4>
+          <p><strong>Email:</strong> suporte@nutno.com.br</p>
+          <p><strong>Referência:</strong> {{idVenda}}</p>
+          <p style="margin-top: 12px; color: #9ca3af">
+            Por favor, mencione este número ao entrar em contato para que
+            possamos resolver mais rapidamente.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <p>
+          Entendemos que isso é uma situação delicada. Estamos aqui para ajudar
+          a resolver! 💚
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          &copy; 2024 Nutno. Todos os direitos reservados. |
+          <a href="{{appUrl}}">Ir para Nutno</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

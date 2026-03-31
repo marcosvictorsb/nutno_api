@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        background-color: #f6f8f7;
+        color: #1f2937;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+      }
+      .header {
+        background: linear-gradient(135deg, #16a249 0%, #0d7a35 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+      }
+      .header-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .greeting {
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+      .content p {
+        color: #6b7280;
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .credentials-box {
+        background-color: #f0fdf4;
+        border: 2px solid #16a249;
+        padding: 24px;
+        margin: 24px 0;
+        border-radius: 8px;
+      }
+      .credentials-box h3 {
+        color: #16a249;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      .credential-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #d1e9db;
+        margin-bottom: 12px;
+      }
+      .credential-row:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+      .credential-label {
+        color: #4b5563;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .credential-value {
+        background-color: #ffffff;
+        color: #1f2937;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-all;
+      }
+      .warning-box {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 6px;
+      }
+      .warning-box h4 {
+        color: #92400e;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .warning-box ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .warning-box li {
+        color: #92400e;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .button-wrapper {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .button {
+        display: inline-block;
+        background: linear-gradient(135deg, #16a249 0%, #0d7a35 100%);
+        color: white;
+        text-decoration: none;
+        padding: 14px 40px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 15px;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        box-shadow: 0 4px 12px rgba(22, 162, 73, 0.3);
+      }
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(22, 162, 73, 0.4);
+      }
+      .steps {
+        background-color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+      .steps h4 {
+        color: #1f2937;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+      .step {
+        display: flex;
+        margin-bottom: 12px;
+        padding: 8px 0;
+      }
+      .step:last-child {
+        margin-bottom: 0;
+      }
+      .step-number {
+        background: #16a249;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 12px;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+      .step-text {
+        color: #6b7280;
+        font-size: 13px;
+      }
+      .divider {
+        border: none;
+        border-top: 1px solid #e5e7eb;
+        margin: 28px 0;
+      }
+      .footer {
+        background-color: #f9fafb;
+        padding: 20px 30px;
+        text-align: center;
+        border-top: 1px solid #e5e7eb;
+      }
+      .footer p {
+        color: #9ca3af;
+        font-size: 12px;
+        margin: 0;
+      }
+      .footer a {
+        color: #16a249;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="header-icon">🔐</div>
+        <h1>Bem-vindo ao Nutno!</h1>
+      </div>
+
+      <div class="content">
+        <p class="greeting">Olá {{nome}},</p>
+
+        <p>
+          Sua inscrição foi aprovada com sucesso! Aqui estão suas credenciais de
+          acesso inicial. <strong>Guarde bem essas informações!</strong>
+        </p>
+
+        <div class="credentials-box">
+          <h3>🔑 Suas Credenciais de Acesso</h3>
+          <div class="credential-row">
+            <span class="credential-label">Email:</span>
+            <span class="credential-value">{{email}}</span>
+          </div>
+          <div class="credential-row">
+            <span class="credential-label">Senha Temporária:</span>
+            <span class="credential-value">{{senhaTemporaria}}</span>
+          </div>
+        </div>
+
+        <div class="warning-box">
+          <h4>⚠️ IMPORTANTE - LEIA COM ATENÇÃO</h4>
+          <ul>
+            <li>
+              Sua senha é <strong>temporária</strong>. Use-a para fazer login
+              pela primeira vez.
+            </li>
+            <li>
+              <strong>Altere sua senha imediatamente</strong> após acessar a
+              plataforma.
+            </li>
+            <li>
+              Não compartilhe sua senha com ninguém. A Nutno nunca pedirá sua
+              senha por email.
+            </li>
+            <li>
+              Guarde essas credenciais em um local seguro ou delete este email
+              após anotar.
+            </li>
+          </ul>
+        </div>
+
+        <p style="margin-top: 24px">
+          Para acessar a plataforma, clique no botão abaixo:
+        </p>
+
+        <div class="button-wrapper">
+          <a href="{{appUrl}}/auth/login" class="button">Acessar Seu Perfil</a>
+        </div>
+
+        <div class="steps">
+          <h4>📋 Próximos Passos</h4>
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-text">
+              Clique no botão acima ou copie o link para seu navegador
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-text">Faça login com email e senha temporária</div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-text">
+              Altere sua senha para uma mais segura no seu perfil
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-text">Comece a gerenciar seus pacientes!</div>
+          </div>
+        </div>
+
+        <p>
+          <strong>Não consegue acessar?</strong> Copie e cole este link no seu
+          navegador:<br />
+          <code
+            style="
+              background: #f3f4f6;
+              padding: 4px 8px;
+              border-radius: 4px;
+              word-break: break-all;
+            "
+          >
+            {{appUrl}}/auth/login
+          </code>
+        </p>
+
+        <div class="divider"></div>
+
+        <p>
+          Se tiver dúvidas ou precisar de suporte, entre em contato conosco.
+          Estamos aqui para ajudar! 💚
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>
+          &copy; 2024 Nutno. Todos os direitos reservados. |
+          <a href="{{appUrl}}">Acessar plataforma</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
