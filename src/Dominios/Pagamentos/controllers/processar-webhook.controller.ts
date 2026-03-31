@@ -27,18 +27,18 @@ export async function processarWebhookKirvano(
 ): Promise<void> {
   try {
     // 1. Validar token
-    const authHeader = req.headers.authorization;
-    if (!WebhookValidatorService.validateToken(authHeader)) {
-      logger.warn('Tentativa de webhook com token inválido', {
-        ip: req.ip,
-        authHeader: authHeader?.substring(0, 20),
-      });
-      res.status(401).json({
-        success: false,
-        message: 'Token de autenticação inválido',
-      });
-      return;
-    }
+    // const authHeader = req.headers.authorization;
+    // if (!WebhookValidatorService.validateToken(authHeader)) {
+    //   logger.warn('Tentativa de webhook com token inválido', {
+    //     ip: req.ip,
+    //     authHeader: authHeader?.substring(0, 20),
+    //   });
+    //   res.status(401).json({
+    //     success: false,
+    //     message: 'Token de autenticação inválido',
+    //   });
+    //   return;
+    // }
 
     // 2. Validar payload
     const payloadValidation = WebhookValidatorService.validatePayload(req.body);
