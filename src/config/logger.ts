@@ -76,6 +76,30 @@ function formatMeta(meta: Record<string, unknown>): string {
   return `\n${lines.join('\n')}`;
 }
 
+/**
+ * Enriquece o info com dados do contexto (AsyncLocalStorage)
+ * Isso garante que requestId e outros dados estejam disponíveis para os transports
+ */
+const contextEnricher = winston.format((info) => {
+  const context = asyncLocalStorage.getStore();
+
+  // Adiciona dados do contexto ao info se não estiverem presentes
+  if (context?.requestId && !info.requestId) {
+    info.requestId = context.requestId;
+  }
+  if (context?.userId && !info.userId) {
+    info.userId = context.userId;
+  }
+  if (context?.method && !info.method) {
+    info.method = context.method;
+  }
+  if (context?.path && !info.path) {
+    info.path = context.path;
+  }
+
+  return info;
+});
+
 const customFormat = printf(
   ({ level, message, timestamp: ts, stack, ...meta }) => {
     const context = asyncLocalStorage.getStore();
@@ -142,6 +166,7 @@ const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || (isDevelopment ? 'debug' : 'info'),
   format: combine(
     errors({ stack: true }),
+    contextEnricher(), // Enriquece com dados do contexto ANTES de formatar
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ' }),
     customFormat
   ),
