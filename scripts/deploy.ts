@@ -206,15 +206,98 @@ async function runMigrations(): Promise<boolean> {
   }
 }
 
-async function reloadPm2(): Promise<boolean> {
-  logStep('ETAPA 6: Reloadando aplicação com PM2');
+async function checkHealth(
+  _attempt: number = 0,
+  maxRetries: number = 10
+): Promise<boolean> {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const PORT = process.env.PORT || 3000;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+      const response = await fetch(`http://localhost:${PORT}/api/health`, {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        logSuccess('Health check passou ✓');
+        return true;
+      }
+    } catch (error: any) {
+      logWarning(`Health check tentativa ${i + 1}/${maxRetries} falhou...`);
+      await delay(2000);
+    }
+  }
+
+  return false;
+}
+
+async function reloadPm2Gradual(): Promise<boolean> {
+  logStep('ETAPA 6: Reloadando aplicação com PM2 (Blue-Green Deployment)');
 
   try {
-    logInfo('Executando: pm2 reload nutno');
-    execSync('pm2 reload nutno', { stdio: 'inherit' });
-    logSuccess('Aplicação reloadada com sucesso');
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    // Obter lista de processos
+    logInfo('Obtendo lista de processos PM2...');
+    const pm2List = execSync('pm2 list --no-color', { encoding: 'utf-8' });
+
+    // Verificar que temos 2 instâncias
+    if (!pm2List.includes('0') || !pm2List.includes('1')) {
+      logWarning('Sistema não está em modo cluster com 2 instâncias.');
+      logInfo('Fazendo reload normal (sem zero-downtime)...');
+      execSync('pm2 reload nutno', { stdio: 'inherit' });
+      logSuccess('Aplicação reloadada com sucesso');
+      return true;
+    }
+
+    // Reload instância 1 primeiro
+    logInfo('Reloadando instância 1...');
+    execSync('pm2 reload nutno --only 1', { stdio: 'inherit' });
+    logSuccess('Instância 1 reloadada');
+
+    logInfo('Aguardando instância 1 inicializar (5 segundos)...');
+    await delay(5000);
+
+    logInfo('Verificando saúde da instância 1...');
+    const health1 = await checkHealth();
+    if (!health1) {
+      logError('Instância 1 não respondeu ao health check');
+      logWarning('Revertendo para reload simples...');
+      execSync('pm2 reload nutno', { stdio: 'inherit' });
+      return false;
+    }
+
+    logSuccess('Instância 1 está saudável ✓');
+
+    // Reload instância 0
+    logInfo('Reloadando instância 0...');
+    execSync('pm2 reload nutno --only 0', { stdio: 'inherit' });
+    logSuccess('Instância 0 reloadada');
+
+    logInfo('Aguardando instância 0 inicializar (5 segundos)...');
+    await delay(5000);
+
+    logInfo('Verificando saúde da instância 0...');
+    const health0 = await checkHealth();
+    if (!health0) {
+      logError('Instância 0 não respondeu ao health check');
+      return false;
+    }
+
+    logSuccess('Instância 0 está saudável ✓');
+    logSuccess('Todas as instâncias foram atualizadas com sucesso!');
+
     return true;
-  } catch (error) {
+  } catch (error: any) {
     logError('Erro ao reloadar aplicação com PM2');
     console.error(error);
     return false;
@@ -260,7 +343,7 @@ async function main() {
   }
 
   // Etapa 6: Reload PM2
-  const pm2Success = await reloadPm2();
+  const pm2Success = await reloadPm2Gradual();
   if (!pm2Success) {
     logError('\n❌ Deploy abortado: Erro ao reloadar aplicação\n');
     process.exit(1);

@@ -7,6 +7,7 @@ import path from 'path';
 process.env.TZ = 'America/Sao_Paulo';
 
 import getCorsOptions from './config/cors';
+import { healthCheck } from './controllers/health.controller';
 import {
   adesaoAuthRoutes,
   adesaoPublicRoutes,
@@ -47,6 +48,7 @@ app.use(requestIdMiddleware);
 
 // Rotas
 // Rotas públicas PRIMEIRO (sem middleware de autenticação)
+app.get('/api/health', healthCheck); // Health check para deploy
 app.use('/', leadRoutes);
 app.use('/api/', formularioPublicoRoutes);
 app.use('/api/', adesaoPublicRoutes); // Rotas públicas de adesão
