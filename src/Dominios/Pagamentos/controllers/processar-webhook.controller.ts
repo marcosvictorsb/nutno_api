@@ -59,24 +59,44 @@ export async function processarWebhookKirvano(
     // 3. Normalizar dados
     const normalizedData = WebhookParserService.parseWebhookPayload(payload);
 
-    // 4. Registrar webhook no BD (mesmo se erro depois)
-    const webhook = await Webhook.create({
-      evento: normalizedData.evento,
-      descricao_evento: normalizedData.descricao_evento,
-      id_checkout: normalizedData.id_checkout,
-      id_venda: normalizedData.id_venda,
-      url_checkout: normalizedData.url_checkout,
-      meio_pagamento: normalizedData.meio_pagamento,
-      preco_total: normalizedData.preco_total,
-      tipo: normalizedData.tipo,
-      status: normalizedData.status,
-      nome_cliente: normalizedData.nome_cliente,
-      documento_cliente: normalizedData.documento_cliente,
-      email_cliente: normalizedData.email_cliente,
-      telefone_cliente: normalizedData.telefone_cliente,
-      payload: normalizedData.payload,
-      processado: false,
+    // 4. Registrar webhook no BD com proteção contra duplicatas (idempotência)
+    const [webhook, created] = await Webhook.findOrCreate({
+      where: { id_venda: normalizedData.id_venda },
+      defaults: {
+        evento: normalizedData.evento,
+        descricao_evento: normalizedData.descricao_evento,
+        id_checkout: normalizedData.id_checkout,
+        url_checkout: normalizedData.url_checkout,
+        meio_pagamento: normalizedData.meio_pagamento,
+        preco_total: normalizedData.preco_total,
+        tipo: normalizedData.tipo,
+        status: normalizedData.status,
+        nome_cliente: normalizedData.nome_cliente,
+        documento_cliente: normalizedData.documento_cliente,
+        email_cliente: normalizedData.email_cliente,
+        telefone_cliente: normalizedData.telefone_cliente,
+        payload: normalizedData.payload,
+        processado: false,
+      },
     });
+
+    // 5. Verificar idempotência (webhook duplicado - já foi recebido)
+    if (!created) {
+      logger.info('Webhook duplicado - retransmissão da Kirvano', {
+        webhookId: webhook.id,
+        id_venda: normalizedData.id_venda,
+        evento: normalizedData.evento,
+        status: normalizedData.status,
+        processado: webhook.processado,
+      });
+      res.json({
+        success: true,
+        message: 'Webhook já foi recebido e processado',
+        webhookId: webhook.id,
+        isDuplicate: true,
+      });
+      return;
+    }
 
     logger.info('Webhook registrado', {
       webhookId: webhook.id,
@@ -84,20 +104,6 @@ export async function processarWebhookKirvano(
       evento: normalizedData.evento,
       status: normalizedData.status,
     });
-
-    // 5. Verificar idempotência (se já foi processado)
-    if (webhook.processado) {
-      logger.info('Webhook já processado anteriormente', {
-        webhookId: webhook.id,
-        id_venda: normalizedData.id_venda,
-      });
-      res.json({
-        success: true,
-        message: 'Webhook já foi processado',
-        webhookId: webhook.id,
-      });
-      return;
-    }
 
     // 6. Processar de acordo com evento
     let resultado: WebhookProcessingResult;
