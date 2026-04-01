@@ -21,7 +21,8 @@
     "seed:dedup": "ts-node scripts/deduplicar-alimentos.ts",
     "seed:alimentos": "npm run seed:taco && npm run seed:tbca && npm run seed:dedup",
     "send:lead-emails": "ts-node scripts/send-lead-emails.ts",
-    "deploy": "ts-node scripts/deploy.ts"
+    "deploy": "ts-node scripts/deploy.ts",
+    "pm2:setup": "ts-node scripts/setup-pm2.ts"
   },
   "repository": {
     "type": "git",
