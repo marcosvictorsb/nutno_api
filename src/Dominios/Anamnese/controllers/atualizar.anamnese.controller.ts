@@ -116,12 +116,34 @@ export const atualizarAnamnese = async (
         ...payload,
       });
 
+      logger.info('Anamnese criada com sucesso', {
+        id_nutricionista,
+        id_paciente,
+        id_anamnese: criada.id,
+      });
+
       id_anamnese = criada.id;
+
+      logger.info(
+        'Atualizando dados basicos do paciente a partir da anamnese',
+        {
+          id_nutricionista,
+          id_paciente,
+        }
+      );
 
       await paciente.update({
         data_nascimento: payload.data_nascimento || paciente.data_nascimento,
         sexo: payload.sexo || paciente.sexo,
       });
+
+      logger.info(
+        'Dados basicos do paciente atualizados a partir da anamnese',
+        {
+          id_nutricionista,
+          id_paciente,
+        }
+      );
     }
 
     if (!paciente.formulario_preenchido) {

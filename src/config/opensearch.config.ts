@@ -107,39 +107,100 @@ export class OpenSearchTransport extends Transport {
   }
 
   /**
-   * Serializa valores para strings JSON quando necessário
+   * Limita o tamanho de uma string
    */
-  private serializeValue(value: any): any {
+  private truncateString(str: string, maxLength: number = 5000): string {
+    if (str.length <= maxLength) {
+      return str;
+    }
+    return (
+      str.substring(0, maxLength) +
+      `... [truncated ${str.length - maxLength} chars]`
+    );
+  }
+
+  /**
+   * Limpa e formata o stack trace
+   */
+  private formatStack(stack: string | undefined): string | null {
+    if (!stack) {
+      return null;
+    }
+
+    // Remove linhas muito longas e limita o total
+    const lines = stack.split('\n');
+    const cleanedLines = lines
+      .map((line) => this.truncateString(line, 500))
+      .slice(0, 20); // Limita a 20 linhas
+
+    return this.truncateString(cleanedLines.join('\n'), 5000);
+  }
+
+  /**
+   * Serializa valores para strings JSON quando necessário
+   * Tratando melhor objetos complexos e referências circulares
+   */
+  private serializeValue(value: any, depth: number = 0): any {
+    const maxDepth = 5;
+
+    if (depth > maxDepth) {
+      return '[Max depth reached]';
+    }
+
     if (value === null || value === undefined) {
       return value;
     }
 
     // Se é uma string, verifica se já é JSON válido
     if (typeof value === 'string') {
-      // Se já parece ser JSON, retorna como está
+      // Se já parece ser JSON, retorna como está (truncado)
       if (
         (value.startsWith('{') && value.endsWith('}')) ||
         (value.startsWith('[') && value.endsWith(']'))
       ) {
-        return value;
+        return this.truncateString(value, 2000);
       }
-      // Caso contrário, retorna a string como está
-      return value;
+      // Caso contrário, retorna a string como está (truncada)
+      return this.truncateString(value, 2000);
+    }
+
+    // Se é um Error, extrai informações úteis
+    if (value instanceof Error) {
+      return {
+        name: value.name,
+        message: value.message,
+        stack: this.formatStack(value.stack),
+      };
     }
 
     // Se é um objeto simples (não array, não Date, não Error), converte para JSON
     if (
       typeof value === 'object' &&
       !Array.isArray(value) &&
-      !(value instanceof Date) &&
-      !(value instanceof Error)
+      !(value instanceof Date)
     ) {
-      return JSON.stringify(value);
+      try {
+        const json = JSON.stringify(value, (_k, v) => {
+          // Ignora funções e símbolos
+          if (typeof v === 'function' || typeof v === 'symbol') {
+            return '[Function]';
+          }
+          return v;
+        });
+        return this.truncateString(json, 2000);
+      } catch (e) {
+        return '[Circular reference or unstringifiable object]';
+      }
     }
 
     // Se é um array, converte para JSON
     if (Array.isArray(value)) {
-      return JSON.stringify(value);
+      try {
+        const json = JSON.stringify(value);
+        return this.truncateString(json, 2000);
+      } catch (e) {
+        return '[Unstringifiable array]';
+      }
     }
 
     return value;
@@ -190,7 +251,7 @@ export class OpenSearchTransport extends Transport {
       '@timestamp': new Date(timestamp || Date.now()).toISOString(),
       level,
       message,
-      stack: stack || null,
+      stack: this.formatStack(stack),
       meta: {
         requestId: requestId || null,
         userId: userId || null,
@@ -230,25 +291,41 @@ export class OpenSearchTransport extends Transport {
         });
       }
     } catch (error: Error | any) {
+      // Log detalhado do erro
+      const errorInfo = {
+        errorMessage: error.message,
+        errorName: error.name,
+        statusCode: error.statusCode,
+        body: error.body ? JSON.stringify(error.body).substring(0, 500) : null,
+        timestamp: new Date().toISOString(),
+        documentLevel: document.level,
+        documentMessage: document.message?.substring(0, 200),
+      };
+
+      console.error(
+        '[OpenSearch] Erro ao enviar documento para OpenSearch',
+        errorInfo
+      );
+
       // Tentar reconectar se a conexão foi perdida
       if (
         error.message?.includes('Connection refused') ||
-        error.message?.includes('ECONNREFUSED')
+        error.message?.includes('ECONNREFUSED') ||
+        error.message?.includes('socket hang up')
       ) {
-        console.warn('[OpenSearch] Conexão perdida, tentando reconectar', {
+        console.warn('[OpenSearch] Conexão perdida, tentando reconectar...', {
           error: error.message,
         });
         this.isConnected = false;
         this.initializeClient();
+
+        // Falha silenciosa - o log já foi registrado localmente
+        return;
       }
 
-      console.error('[OpenSearch] Erro detalhado ao enviar documento', {
-        error: error.message,
-        statusCode: error.statusCode,
-        body: error.body,
-      });
-
-      throw error;
+      // Para outros tipos de erro, também falha silenciosamente
+      // porque o log já foi outputado no console
+      return;
     }
   }
 
