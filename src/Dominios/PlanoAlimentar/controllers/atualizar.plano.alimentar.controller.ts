@@ -126,7 +126,7 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
 
       const idsRefeicoesMantidas: number[] = [];
 
-      for (const refeicaoData of refeicoes) {
+      for (const [index, refeicaoData] of refeicoes.entries()) {
         if (refeicaoData.id) {
           // Atualizar refeição existente
           logger.info('Atualizando refeição existente', {
@@ -168,7 +168,7 @@ export const atualizarPlanoAlimentar = async (req: Request, res: Response) => {
             plano_alimentar_id: plano.id,
             nome: refeicaoData.nome,
             horario_sugerido: refeicaoData.horario_sugerido,
-            ordem: refeicaoData.ordem,
+            ordem: refeicaoData.ordem ?? index + 1,
             observacoes: refeicaoData.observacoes,
           });
 
