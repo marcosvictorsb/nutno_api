@@ -4,19 +4,10 @@ import type Adesao from '../../Adesao/models/Adesao';
 import type ItemRefeicao from './ItemRefeicao';
 import type PlanoAlimentar from './PlanoAlimentar';
 
-type NomeRefeicao =
-  | 'Café da manhã'
-  | 'Lanche manhã'
-  | 'Almoço'
-  | 'Lanche tarde'
-  | 'Jantar'
-  | 'Ceia'
-  | 'Personalizado';
-
 class Refeicao extends Model {
   public id!: number;
   public plano_alimentar_id!: number;
-  public nome!: NomeRefeicao;
+  public nome!: string;
   public horario_sugerido?: string;
   public ordem!: number;
   public observacoes?: string;
@@ -48,15 +39,7 @@ Refeicao.init(
       onUpdate: 'CASCADE',
     },
     nome: {
-      type: DataTypes.ENUM(
-        'Café da manhã',
-        'Lanche manhã',
-        'Almoço',
-        'Lanche tarde',
-        'Jantar',
-        'Ceia',
-        'Personalizado'
-      ),
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     horario_sugerido: {
